@@ -1,0 +1,88 @@
+<mat-toolbar class="toolbar" color="primary">
+  <div class="left">
+    <button mat-icon-button (click)="prev()" aria-label="Previous">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <button mat-icon-button (click)="next()" aria-label="Next">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+  <div class="center">
+    <span class="month-label">{{ monthLabel() }}</span>
+    <mat-button-toggle-group [value]="view()" (change)="setView($event.value)">
+      <mat-button-toggle value="month">Month</mat-button-toggle>
+      <mat-button-toggle value="week">Week</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+  <div class="right">
+    <span class="today-badge">Today: {{ todayISO }}</span>
+  </div>
+  </mat-toolbar>
+
+<section class="summary">
+  <mat-card appearance="outlined">
+    <mat-card-title>Today's Meals</mat-card-title>
+    <mat-card-content>
+      <div class="chips">
+        @for (m of todayMeals(); track m.meal) {
+          <mat-chip-option [selected]="m.optedIn" [color]="m.optedIn ? 'primary' : 'warn'">
+            <mat-icon>{{ m.optedIn ? 'check_circle' : 'cancel' }}</mat-icon>
+            <span>{{ mealLabel[m.meal] }} · {{ mealTime[m.meal] }} · {{ m.optedIn ? 'Opted in' : 'Opted out' }}</span>
+          </mat-chip-option>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+  </section>
+
+@if (loading()) {
+  <div class="center p24">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+}
+
+@if (view() === 'month' && month(); as m) {
+  <div class="weekday-headers">
+    @for (name of weekdayNames(); track name) {
+      <div class="weekday">{{ name }}</div>
+    }
+  </div>
+  <div class="calendar-grid month">
+    @for (day of m.days; track day.dateISO; let idx = $index) {
+      @if (day.inCurrentMonth === true) {
+        <app-day-cell
+          [day]="day"
+          [mealLabel]="mealLabel"
+          [mealTime]="mealTime"
+          [inCurrentMonth]="true"
+          (toggle)="toggleMeal($event.dateISO, $event.meal, $event.optedIn)"
+          class="col-{{ idx % 7 }}"
+        />
+      } @else {
+        <div class="placeholder col-{{ idx % 7 }}"></div>
+      }
+    }
+  </div>
+}
+
+@if (view() === 'week' && week(); as w) {
+  <div class="weekday-headers">
+    @for (name of weekdayNames(); track name) {
+      <div class="weekday">{{ name }}</div>
+    }
+  </div>
+  <div class="calendar-grid week">
+    @for (day of w.days; track day.dateISO; let idx = $index) {
+      <app-day-cell
+        [day]="day"
+        [mealLabel]="mealLabel"
+        [mealTime]="mealTime"
+        [inCurrentMonth]="true"
+        (toggle)="toggleMeal($event.dateISO, $event.meal, $event.optedIn)"
+        class="col-{{ idx % 7 }}"
+      />
+    }
+  </div>
+}
+
+

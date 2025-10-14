@@ -1,0 +1,20 @@
+<div class="cell" [class.outside]="!inCurrentMonth" [class.completed]="allServed">
+  <div class="cell-header">
+    <div class="date">
+      <mat-icon class="tick" *ngIf="allServed">check_circle</mat-icon>
+      {{ dayName }} {{ day.dateISO.split('-')[2] }}
+    </div>
+  </div>
+  <div class="cell-body">
+    @for (meal of day.meals; track meal.meal) {
+      <div class="meal-inline" [class.optin]="meal.optedIn" [class.optout]="!meal.optedIn">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="text">{{ mealLabel[meal.meal] }} · {{ mealTime[meal.meal] }} · {{ meal.optedIn ? 'Opted in' : 'Opted out' }}</span>
+        <mat-slide-toggle [checked]="meal.optedIn" [disabled]="meal.isEditable === false" (change)="onToggle(meal.meal, $event.checked!)"></mat-slide-toggle>
+      </div>
+    }
+  </div>
+</div>
+
+
+
