@@ -2,9 +2,9 @@
 // These models are intentionally backend-friendly: keep them close to what a real API would expose.
 
 export enum MealType {
-  Breakfast = 'breakfast',
-  Lunch = 'lunch',
-  Dinner = 'dinner',
+  Breakfast = 'BREAKFAST',
+  Lunch = 'LUNCH',
+  Dinner = 'DINNER',
 }
 
 export interface MealOptIn {
@@ -32,6 +32,7 @@ export interface CalendarQuery {
   month: number; // 0-11
   year: number; // four-digit year
   weekStartsOn: WeekStart; // first day of week for UI grouping
+  userId?: string; // optional, for admin access
 }
 
 export interface CalendarMonth {
@@ -47,13 +48,13 @@ export interface CalendarWeek {
 
 export enum PatternKind {
   // Weekdays (Mon-Fri)
-  Weekdays = 'weekdays',
+  Weekdays = 'WEEKDAYS',
   // Weekends (Sat-Sun)
-  Weekends = 'weekends',
+  Weekends = 'WEEKENDS',
   // Every day
-  Daily = 'daily',
+  Daily = 'DAILY',
   // Specific weekdays selection (e.g., Mon, Wed, Fri)
-  SpecificWeekdays = 'specific_weekdays',
+  SpecificWeekdays = 'SPECIFIC_WEEKDAYS',
 }
 
 export interface RecurrenceRule {
@@ -73,11 +74,15 @@ export interface PatternDefinition {
   endDateISO?: string;
 }
 
-export interface ApplyPatternRequest {
-  patternId: string;
-  // Optional range to (re)apply the rule and compute day schedules
-  fromDateISO?: string;
-  toDateISO?: string;
+export interface CreatePatternRequest {
+  name: string;
+  active?: boolean;
+  kind: PatternKind;
+  isoWeekdays?: number[];
+  meals: MealType[];
+  startDateISO?: string;
+  endDateISO?: string;
+  userId?: string;
 }
 
 export interface ToggleMealRequest {
@@ -89,6 +94,9 @@ export interface ToggleMealRequest {
 export interface ApiResponse<T> {
   data: T;
 }
+
+// Re-export auth models
+export * from './auth.models';
 
 
 
