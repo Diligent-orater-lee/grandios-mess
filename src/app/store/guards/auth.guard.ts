@@ -1,12 +1,12 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../api/auth-api.service';
+import { AuthStore } from '../features/auth.store';
 
-export const authGuard: CanActivateFn = (route, state) => {
-  const authService = inject(AuthService);
+export const authGuard: CanActivateFn = async (route, state) => {
+  const authStore = inject(AuthStore);
   const router = inject(Router);
 
-  const isAuthenticated = authService.isAuthenticated();
+  const isAuthenticated = authStore.isAuthenticated() || !!localStorage.getItem('refresh_token');
   console.log('Auth guard check:', { isAuthenticated, currentUrl: state.url });
 
   if (isAuthenticated) {

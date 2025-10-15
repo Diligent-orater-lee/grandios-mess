@@ -6,7 +6,7 @@ import { AuthState, LoginRequest, RegisterRequest, User } from '../models';
 
 const initialState: AuthState = {
   user: null,
-  token: null,
+  accessToken: null,
   isAuthenticated: false,
   loading: false,
   error: null,
@@ -25,13 +25,11 @@ export const AuthStore = signalStore(
         
         authService.login(credentials).subscribe({
           next: (response) => {
-            patchState(store, {
-              user: response.user,
-              token: response.access_token,
-              isAuthenticated: true,
-              loading: false,
-              error: null,
-            });
+            // Persist refresh token and user; keep access token in store
+            localStorage.setItem('refresh_token', response.refresh_token);
+            localStorage.setItem('auth_user', JSON.stringify(response.user));
+            sessionStorage.setItem('access_token', response.access_token);
+            patchState(store, { user: response.user, accessToken: response.access_token, isAuthenticated: true, loading: false, error: null });
             // Navigate to calendar page after successful login
             console.log('Login successful, navigating to calendar...');
             router.navigate(['/']);
@@ -50,13 +48,10 @@ export const AuthStore = signalStore(
         
         authService.register(userData).subscribe({
           next: (response) => {
-            patchState(store, {
-              user: response.user,
-              token: response.access_token,
-              isAuthenticated: true,
-              loading: false,
-              error: null,
-            });
+            localStorage.setItem('refresh_token', response.refresh_token);
+            localStorage.setItem('auth_user', JSON.stringify(response.user));
+            sessionStorage.setItem('access_token', response.access_token);
+            patchState(store, { user: response.user, accessToken: response.access_token, isAuthenticated: true, loading: false, error: null });
             // Navigate to calendar page after successful registration
             console.log('Registration successful, navigating to calendar...');
             router.navigate(['/']);
@@ -71,10 +66,12 @@ export const AuthStore = signalStore(
       },
 
       logout() {
-        authService.logout();
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('auth_user');
+        sessionStorage.removeItem('access_token');
         patchState(store, {
           user: null,
-          token: null,
+          accessToken: null,
           isAuthenticated: false,
           loading: false,
           error: null,
@@ -85,16 +82,38 @@ export const AuthStore = signalStore(
         patchState(store, { error: null });
       },
 
-      initializeAuth() {
-        const user = authService.getUser();
-        const token = authService.getToken();
-        const isAuthenticated = authService.isAuthenticated();
+      async initializeAuth() {
+        // No upfront API call. Trust what's present; interceptor will refresh on 401/403.
+        const userStr = localStorage.getItem('auth_user');
+        const existingUser: User | null = userStr ? JSON.parse(userStr) : null;
+        // Restore access token for interceptor use
+        const token = sessionStorage.getItem('access_token');
+        if (token) sessionStorage.setItem('access_token', token);
+        patchState(store, { user: existingUser, isAuthenticated: !!token, loading: false });
+      },
 
-        patchState(store, {
-          user,
-          token,
-          isAuthenticated,
-        });
+      getAccessToken(): string | null {
+        return store.accessToken();
+      },
+
+      async refreshUsingStoredToken(): Promise<string | null> {
+        const refreshToken = localStorage.getItem('refresh_token');
+        if (!refreshToken) return null;
+        try {
+          const response = await authService.refresh(refreshToken).toPromise();
+          if (!response) return null;
+          localStorage.setItem('refresh_token', response.refresh_token);
+          localStorage.setItem('auth_user', JSON.stringify(response.user));
+          sessionStorage.setItem('access_token', response.access_token);
+          patchState(store, { user: response.user, accessToken: response.access_token, isAuthenticated: true });
+          return response.access_token;
+        } catch {
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('auth_user');
+          sessionStorage.removeItem('access_token');
+          patchState(store, { user: null, accessToken: null, isAuthenticated: false });
+          return null;
+        }
       },
     };
   }),
