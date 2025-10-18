@@ -18,3 +18,39 @@
   margin-top: 2px;
   text-transform: uppercase;
 }
+
+.user-info-text {
+  margin-right: 16px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+// Navigation button styles
+button[mat-button] {
+  margin-right: 8px;
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+  
+  &.active {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .user-info-text {
+    display: none;
+  }
+  
+  button[mat-button] {
+    span {
+      display: none;
+    }
+    
+    mat-icon {
+      margin-right: 0;
+    }
+  }
+}

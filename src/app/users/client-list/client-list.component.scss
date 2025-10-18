@@ -1,0 +1,266 @@
+.client-list-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.client-list-card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+mat-card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin: -24px -24px 24px -24px;
+  padding: 24px;
+  
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    
+    mat-icon {
+      font-size: 1.75rem;
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
+  
+  mat-card-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    margin: 8px 0 0 0;
+    font-size: 1rem;
+  }
+}
+
+.search-actions-bar {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  
+  .search-field {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  button {
+    height: 56px;
+    min-width: 120px;
+    
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background-color: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+  color: #c62828;
+  margin-bottom: 16px;
+  
+  mat-icon {
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  gap: 16px;
+  
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 1rem;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 16px;
+}
+
+.clients-table {
+  width: 100%;
+  background: white;
+  
+  th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+  }
+  
+  td {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  tr:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .username-cell,
+  .email-cell,
+  .date-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    mat-icon {
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+      color: #666;
+    }
+  }
+  
+  .user-icon {
+    color: #2196f3 !important;
+  }
+  
+  .email-icon {
+    color: #ff9800 !important;
+  }
+  
+  .date-icon {
+    color: #4caf50 !important;
+  }
+}
+
+.user-type-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  &.user-type-admin {
+    background-color: #e3f2fd;
+    color: #1976d2;
+  }
+  
+  &.user-type-client {
+    background-color: #e8f5e8;
+    color: #388e3c;
+  }
+  
+  &.user-type-delivery {
+    background-color: #fff3e0;
+    color: #f57c00;
+  }
+}
+
+.pagination {
+  margin-top: 16px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 16px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  text-align: center;
+  
+  .empty-icon {
+    font-size: 4rem;
+    width: 4rem;
+    height: 4rem;
+    color: #ccc;
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    margin: 0 0 8px 0;
+    color: #666;
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+  
+  p {
+    margin: 0;
+    color: #999;
+    font-size: 1rem;
+    max-width: 400px;
+    line-height: 1.5;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .client-list-container {
+    padding: 16px;
+  }
+  
+  .search-actions-bar {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .search-field {
+      min-width: unset;
+    }
+  }
+  
+  .clients-table {
+    font-size: 0.875rem;
+  }
+  
+  .username-cell,
+  .email-cell,
+  .date-cell {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    
+    mat-icon {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  mat-card-header {
+    padding: 16px;
+    
+    mat-card-title {
+      font-size: 1.25rem;
+    }
+    
+    mat-card-subtitle {
+      font-size: 0.875rem;
+    }
+  }
+  
+  .clients-table {
+    font-size: 0.75rem;
+  }
+  
+  .user-type-badge {
+    font-size: 0.625rem;
+    padding: 2px 8px;
+  }
+}

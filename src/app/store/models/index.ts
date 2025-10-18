@@ -98,5 +98,8 @@ export interface ApiResponse<T> {
 // Re-export auth models
 export * from './auth.models';
 
+// Re-export user models
+export * from './user.models';
+
 
 

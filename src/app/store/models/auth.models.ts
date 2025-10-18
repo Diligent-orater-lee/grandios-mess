@@ -1,5 +1,11 @@
 // Authentication models for the Grandios Mess application
 
+export enum UserType {
+  ADMIN = 'ADMIN',
+  CLIENT = 'CLIENT',
+  DELIVERY = 'DELIVERY'
+}
+
 export interface LoginRequest {
   username: string;
   password: string;
@@ -10,7 +16,7 @@ export interface RegisterRequest {
   username: string;
   password: string;
   name?: string;
-  userType?: 'ADMIN' | 'CLIENT';
+  userType?: UserType;
 }
 
 export interface AuthResponse {
@@ -24,7 +30,7 @@ export interface User {
   email: string;
   username: string;
   name: string;
-  userType: 'ADMIN' | 'CLIENT';
+  userType: UserType;
 }
 
 export interface AuthState {

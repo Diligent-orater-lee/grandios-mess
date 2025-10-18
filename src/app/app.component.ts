@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterOutlet, Router } from '@angular/router';
+import { RouterOutlet, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,11 +7,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthStore } from './store/features/auth.store';
+import { UserType } from './store/models';
 
 @Component({
   selector: 'app-root',
   imports: [
-    RouterOutlet, 
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
     CommonModule,
     MatToolbarModule,
     MatButtonModule,
@@ -25,6 +28,9 @@ import { AuthStore } from './store/features/auth.store';
 export class AppComponent {
   private readonly router = inject(Router);
   public readonly authStore = inject(AuthStore);
+  
+  // Expose UserType enum to template
+  protected readonly UserType = UserType;
 
   logout() {
     this.authStore.logout();

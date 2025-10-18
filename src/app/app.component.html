@@ -1,6 +1,24 @@
 <mat-toolbar color="primary" *ngIf="authStore.isAuthenticated()">
   <span>Grandios Mess</span>
+  
+  <!-- Navigation buttons based on user type -->
+  @if (authStore.user()?.userType === UserType.ADMIN || authStore.user()?.userType === UserType.DELIVERY) {
+    <button mat-button routerLink="/clients" routerLinkActive="active">
+      <mat-icon>people</mat-icon>
+      Clients
+    </button>
+    <button mat-button routerLink="/" routerLinkActive="active">
+      <mat-icon>calendar_today</mat-icon>
+      Calendar
+    </button>
+  }
+  
   <span class="spacer"></span>
+  
+  <!-- User info and menu -->
+  <span class="user-info-text">
+    {{ authStore.user()?.name || authStore.user()?.username }} ({{ authStore.user()?.userType }})
+  </span>
   <button mat-icon-button [matMenuTriggerFor]="userMenu">
     <mat-icon>account_circle</mat-icon>
   </button>
