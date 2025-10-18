@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MealType, DaySchedule } from '../../store/models';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { DaySchedule, MealType } from '../../store/models';
 
 @Component({
   selector: 'app-day-cell',
@@ -20,7 +20,7 @@ export class DayCellComponent {
 
   @Output() toggle = new EventEmitter<{ dateISO: string; meal: MealType; optedIn: boolean }>();
 
-  protected readonly isToday = computed(() => this.day.dateISO === new Date().toISOString().slice(0, 10));
+  protected readonly isToday = computed(() => new Date(this.day.dateISO).setHours(0, 0, 0, 0) === new Date().setHours(0, 0, 0, 0));
 
   protected onToggle(meal: MealType, checked: boolean): void {
     this.toggle.emit({ dateISO: this.day.dateISO, meal, optedIn: checked });

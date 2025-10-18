@@ -49,7 +49,7 @@ export class CalendarPageComponent {
 
   protected readonly calendarGridRef = viewChild<ElementRef<HTMLElement>>('calendarGrid');
 
-  protected readonly todayISO = signal(new Date().toISOString().slice(0, 10));
+  protected readonly todayISO = signal(new Date().toString().slice(0, 10));
 
   constructor() {
     this.store.setSelectedUserId(
