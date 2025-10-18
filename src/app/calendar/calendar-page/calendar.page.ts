@@ -11,6 +11,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { delay, filter, fromEvent, map, startWith, switchMap } from 'rxjs';
+import { isTodayDate } from '../../shared/utils/date.helpers';
 import { AuthStore } from '../../store/features/auth.store';
 import { CalendarStore } from '../../store/features/calendar.store';
 import { MealType, UserType } from '../../store/models';
@@ -99,7 +100,7 @@ export class CalendarPageComponent {
     const m = this.month();
     const w = this.week();
     const source = m?.days ?? w?.days ?? [];
-    const today = source.find(d => d.dateISO === this.todayISO());
+    const today = source.find(d => isTodayDate(d.dateISO));
     return today?.meals ?? [];
   });
 
@@ -158,6 +159,10 @@ export class CalendarPageComponent {
 
   protected goBackToClients(): void {
     this.router.navigate(['/clients']);
+  }
+
+  protected navigateToPatterns(): void {
+    this.router.navigate(['/patterns']);
   }
 
 

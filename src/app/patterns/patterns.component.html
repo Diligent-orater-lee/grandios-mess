@@ -1,0 +1,26 @@
+<mat-toolbar class="toolbar" color="primary">
+  <div class="left">
+    <button mat-icon-button (click)="goBack()" aria-label="Back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+  <div class="center">
+    <span class="title">{{ title }}</span>
+  </div>
+  <div class="right">
+    <!-- Future actions can go here -->
+  </div>
+</mat-toolbar>
+
+<section class="content">
+  <mat-card appearance="outlined">
+    <mat-card-title>
+      <mat-icon>pattern</mat-icon>
+      {{ title }}
+    </mat-card-title>
+    <mat-card-content>
+      <p>{{ description }}</p>
+      <p>This is where meal patterns will be managed.</p>
+    </mat-card-content>
+  </mat-card>
+</section>

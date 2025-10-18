@@ -1,0 +1,44 @@
+.toolbar {
+  .left,
+  .right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+  }
+}
+
+.content {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  mat-card {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+
+    mat-card-content {
+      p {
+        margin: 16px 0;
+        line-height: 1.6;
+        color: rgba(0, 0, 0, 0.87);
+      }
+    }
+  }
+}

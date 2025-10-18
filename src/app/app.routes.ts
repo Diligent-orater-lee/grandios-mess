@@ -23,6 +23,11 @@ export const routes: Routes = [
     canActivate: [authGuard, adminAndDeliveryGuard],
   },
   {
+    path: 'patterns',
+    loadComponent: () => import('./patterns/patterns.component').then(m => m.PatternsComponent),
+    canActivate: [authGuard, allUsersGuard],
+  },
+  {
     path: '**',
     redirectTo: '',
   },
