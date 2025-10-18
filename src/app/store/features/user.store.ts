@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
-import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { UserApiService } from '../api/user-api.service';
-import { UserListState, PaginationParams } from '../models';
+import { PaginationParams, UserListState } from '../models';
 
 const initialState: UserListState = {
   clients: [],
@@ -16,7 +16,6 @@ const initialState: UserListState = {
 };
 
 export const UserStore = signalStore(
-  { providedIn: 'root' },
   withState(initialState),
   withMethods((store) => {
     const userApiService = inject(UserApiService);
@@ -24,7 +23,7 @@ export const UserStore = signalStore(
     return {
       async loadClients(params: PaginationParams = {}) {
         patchState(store, { loading: true, error: null });
-        
+
         try {
           const response = await userApiService.getClientUsers(params).toPromise();
           if (response) {
@@ -45,7 +44,7 @@ export const UserStore = signalStore(
 
       async loadDeliveryUsers(params: PaginationParams = {}) {
         patchState(store, { loading: true, error: null });
-        
+
         try {
           const response = await userApiService.getDeliveryUsers(params).toPromise();
           if (response) {

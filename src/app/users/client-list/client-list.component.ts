@@ -1,18 +1,21 @@
-import { Component, OnInit, signal, computed, inject, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UserStore } from '../../store/features/user.store';
 import { AuthStore } from '../../store/features/auth.store';
+import { UserStore } from '../../store/features/user.store';
+import { UserListItem } from '../../store/models';
 
 @Component({
   selector: 'app-client-list',
@@ -27,7 +30,11 @@ import { AuthStore } from '../../store/features/auth.store';
     MatIconModule,
     MatButtonModule,
     MatCardModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTooltipModule
+  ],
+  providers: [
+    UserStore
   ],
   templateUrl: './client-list.component.html',
   styleUrls: ['./client-list.component.scss'],
@@ -37,12 +44,13 @@ export class ClientListComponent implements OnInit {
   private readonly userStore = inject(UserStore);
   private readonly authStore = inject(AuthStore);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
 
   private readonly searchSubject = new Subject<string>();
 
   // Signals for component state
   protected readonly searchTerm = signal('');
-  protected readonly displayedColumns = signal(['username', 'email', 'name', 'userType', 'createdAt']);
+  protected readonly displayedColumns = signal(['username', 'email', 'name', 'userType', 'createdAt', 'actions']);
 
   // Computed signals
   protected readonly clients = computed(() => this.userStore.clients());
@@ -102,5 +110,9 @@ export class ClientListComponent implements OnInit {
 
   protected getUserTypeDisplay(userType: string): string {
     return userType.charAt(0).toUpperCase() + userType.slice(1).toLowerCase();
+  }
+
+  protected viewClientCalendar(client: UserListItem): void {
+    this.router.navigate(['/calendar', client.id]);
   }
 }

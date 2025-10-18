@@ -18,6 +18,11 @@ export const routes: Routes = [
     canActivate: [authGuard, allUsersGuard],
   },
   {
+    path: 'calendar/:userId',
+    loadComponent: () => import('./calendar/calendar-page/calendar.page').then(m => m.CalendarPageComponent),
+    canActivate: [authGuard, adminAndDeliveryGuard],
+  },
+  {
     path: '**',
     redirectTo: '',
   },

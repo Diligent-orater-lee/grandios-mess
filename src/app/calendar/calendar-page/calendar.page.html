@@ -1,5 +1,10 @@
 <mat-toolbar class="toolbar" color="primary">
   <div class="left">
+    @if (isAdminOrDelivery()) {
+      <button mat-icon-button (click)="goBackToClients()" aria-label="Back to Clients">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    }
     <button mat-icon-button (click)="prev()" aria-label="Previous">
       <mat-icon>chevron_left</mat-icon>
     </button>
@@ -9,10 +14,10 @@
   </div>
   <div class="center">
     <span class="month-label">{{ monthLabel() }}</span>
-    <mat-button-toggle-group [value]="view()" (change)="setView($event.value)">
-      <mat-button-toggle value="month">Month</mat-button-toggle>
-      <mat-button-toggle value="week">Week</mat-button-toggle>
-    </mat-button-toggle-group>
+      <mat-button-toggle-group [value]="view()" (change)="setView($event.value)">
+        <mat-button-toggle value="month">Month</mat-button-toggle>
+        <mat-button-toggle value="week">Week</mat-button-toggle>
+      </mat-button-toggle-group>
   </div>
   <div class="right">
     <span class="today-badge">Today: {{ todayISO }}</span>

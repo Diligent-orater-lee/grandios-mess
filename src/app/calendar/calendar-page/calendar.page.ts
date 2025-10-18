@@ -1,16 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { ActivatedRoute, Router } from '@angular/router';
+import { map } from 'rxjs';
+import { AuthStore } from '../../store/features/auth.store';
 import { CalendarStore } from '../../store/features/calendar.store';
+import { MealType, UserType } from '../../store/models';
 import { DayCellComponent } from '../day-cell/day-cell.component';
-import { MealType } from '../../store/models';
 
 @Component({
   selector: 'app-calendar-page',
@@ -27,19 +30,37 @@ import { MealType } from '../../store/models';
     MatToolbarModule,
     DayCellComponent,
   ],
+  providers: [
+    CalendarStore
+  ],
   templateUrl: './calendar.page.html',
   styleUrl: './calendar.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalendarPageComponent {
   protected readonly store = inject(CalendarStore);
+  protected readonly authStore = inject(AuthStore);
+  protected readonly route = inject(ActivatedRoute);
+  protected readonly router = inject(Router);
 
   protected readonly MealType = MealType;
+
+  constructor() {
+    this.store.setSelectedUserId(
+      this.route.paramMap.pipe(map(params => params.get('userId') || undefined))
+    );
+  }
 
   protected view = computed(() => this.store.view());
   protected loading = computed(() => this.store.loading());
   protected month = computed(() => this.store.monthData?.());
   protected week = computed(() => this.store.weekData?.());
+  protected selectedUserId = computed(() => this.store.selectedUserId());
+  protected currentUser = computed(() => this.authStore.user());
+  protected isAdminOrDelivery = computed(() => {
+    const user = this.currentUser();
+    return user?.userType === UserType.ADMIN || user?.userType === UserType.DELIVERY;
+  });
 
   // UI helpers
   protected readonly mealLabel: Record<MealType, string> = {
@@ -115,6 +136,10 @@ export class CalendarPageComponent {
 
   protected isInCurrentMonth(dateISO: string, displayMonth: number): boolean {
     return new Date(dateISO).getMonth() === displayMonth;
+  }
+
+  protected goBackToClients(): void {
+    this.router.navigate(['/clients']);
   }
 }
 
