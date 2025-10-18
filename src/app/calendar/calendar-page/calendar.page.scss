@@ -5,6 +5,7 @@
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   gap: 8px;
+  overflow: auto;
 }
 
 .toolbar .left,

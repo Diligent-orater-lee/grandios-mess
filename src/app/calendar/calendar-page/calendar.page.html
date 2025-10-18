@@ -20,7 +20,7 @@
       </mat-button-toggle-group>
   </div>
   <div class="right">
-    <span class="today-badge">Today: {{ todayISO() }}</span>
+    <span class="today-badge">Today: {{ todayISO() | slice : 5 }}</span>
   </div>
   </mat-toolbar>
 

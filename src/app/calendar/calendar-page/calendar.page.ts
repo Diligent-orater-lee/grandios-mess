@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, Injector, signal, viewChild } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, ElementRef, inject, Injector, signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -10,7 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { fromEvent, map, startWith } from 'rxjs';
+import { delay, filter, fromEvent, map, startWith, switchMap } from 'rxjs';
 import { AuthStore } from '../../store/features/auth.store';
 import { CalendarStore } from '../../store/features/calendar.store';
 import { MealType, UserType } from '../../store/models';
@@ -50,30 +50,23 @@ export class CalendarPageComponent {
   protected readonly calendarGridRef = viewChild<ElementRef<HTMLElement>>('calendarGrid');
 
   protected readonly todayISO = signal(new Date().toISOString().slice(0, 10));
-  protected readonly isMobile = toSignal(
-    fromEvent(window, 'resize').pipe(
-      startWith(window.innerWidth),
-      map(() => window.innerWidth <= 960)
-    ),
-    { initialValue: typeof window !== 'undefined' ? window.innerWidth <= 960 : false }
-  );
 
   constructor() {
     this.store.setSelectedUserId(
       this.route.paramMap.pipe(map(params => params.get('userId') || undefined))
     );
 
-    // Effect to handle mobile scroll after component renders
-    effect(() => {
-      const view = this.view();
-      const isMobile = this.isMobile();
-      const viewContainer = this.calendarGridRef()
-
-      if (viewContainer && view === 'month' && isMobile) {
+    toObservable(this.calendarGridRef).pipe(
+      filter(Boolean),
+      filter(() => this.view() === "month"),
+      switchMap(() => fromEvent(window, 'resize').pipe(startWith(null), map(() => window.innerWidth <= 960))),
+      filter(Boolean),
+      delay(20),
+      takeUntilDestroyed()
+    ).subscribe(() => {
         afterNextRender(() => {
           this.scrollToToday();
-        }, {injector: this.injector});
-      }
+        }, { injector: this.injector });
     });
   }
 
@@ -111,7 +104,7 @@ export class CalendarPageComponent {
   });
 
   protected weekdayNames = computed(() => {
-    const names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const start = this.store.weekStartsOn();
     const arr: string[] = [];
     for (let i = 0; i < 7; i++) arr.push(names[(start + i) % 7]);

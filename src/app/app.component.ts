@@ -1,11 +1,11 @@
-import { Component, inject } from '@angular/core';
-import { RouterOutlet, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatDividerModule } from '@angular/material/divider';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { Router, RouterOutlet } from '@angular/router';
 import { AuthStore } from './store/features/auth.store';
 import { UserType } from './store/models';
 
@@ -13,8 +13,6 @@ import { UserType } from './store/models';
   selector: 'app-root',
   imports: [
     RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
     CommonModule,
     MatToolbarModule,
     MatButtonModule,
@@ -28,7 +26,7 @@ import { UserType } from './store/models';
 export class AppComponent {
   private readonly router = inject(Router);
   public readonly authStore = inject(AuthStore);
-  
+
   // Expose UserType enum to template
   protected readonly UserType = UserType;
 
