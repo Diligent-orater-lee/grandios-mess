@@ -1,0 +1,118 @@
+<div class="client-list-container">
+  <mat-card class="client-list-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>people</mat-icon>
+        Client List
+      </mat-card-title>
+      <mat-card-subtitle>
+        Manage and view client users
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Search and Actions Bar -->
+      <div class="search-actions-bar">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search clients</mat-label>
+          <input
+            matInput
+            type="text"
+            placeholder="Search by username, email, or name..."
+            [value]="searchTerm()"
+            (input)="onSearchChange($event)"
+          />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onRefresh()"
+          [disabled]="loading()"
+        >
+          <mat-icon>refresh</mat-icon>
+          Refresh
+        </button>
+      </div>
+
+      <!-- Error Display -->
+      @if (error()) {
+        <div class="error-message">
+          <mat-icon color="warn">error</mat-icon>
+          {{ error() }}
+        </div>
+      }
+
+      <!-- Loading Spinner -->
+      @if (loading()) {
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Loading clients...</p>
+        </div>
+      }
+
+      <!-- Clients Table -->
+      @if (!loading() && clients().length > 0) {
+        <div class="table-container">
+          <table mat-table [dataSource]="clients()" class="clients-table">
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Full Name</th>
+              <td mat-cell *matCellDef="let client">
+                {{ client.name || 'N/A' }}
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let client">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="viewClientCalendar(client); $event.stopPropagation()"
+                  matTooltip="View Calendar"
+                  aria-label="View client calendar"
+                >
+                  <mat-icon>calendar_today</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns()" class="clickable-row" (click)="viewClientCalendar(row)"></tr>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (pagination()) {
+          <mat-paginator
+            [length]="pagination()!.total"
+            [pageSize]="pagination()!.limit"
+            [pageIndex]="pagination()!.page - 1"
+            [pageSizeOptions]="[5, 10, 20, 50]"
+            [showFirstLastButtons]="true"
+            (page)="onPageChange($event)"
+            class="pagination"
+          ></mat-paginator>
+        }
+      }
+
+      <!-- Empty State -->
+      @if (!loading() && clients().length === 0 && !error()) {
+        <div class="empty-state">
+          <mat-icon class="empty-icon">people_outline</mat-icon>
+          <h3>No clients found</h3>
+          <p>
+            @if (searchTerm()) {
+              No clients match your search criteria. Try adjusting your search terms.
+            } @else {
+              There are no clients to display at the moment.
+            }
+          </p>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

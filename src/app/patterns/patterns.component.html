@@ -1,0 +1,27 @@
+<mat-toolbar class="toolbar" color="primary">
+  <div class="left">
+    <button mat-icon-button (click)="goBack()" aria-label="Back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+  <div class="center">
+    <span class="title">{{ title }}</span>
+  </div>
+  <div class="right">
+    <button mat-icon-button (click)="onCreateNew()" aria-label="Create New Pattern">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>
+
+<section class="content">
+  <app-pattern-list
+    [patterns]="patterns()"
+    [loading]="loading()"
+    [error]="error()"
+    (edit)="onEdit($event)"
+    (delete)="onDelete($event)"
+    (toggleActive)="onToggleActive($event)"
+    (createNew)="onCreateNew()">
+  </app-pattern-list>
+</section>

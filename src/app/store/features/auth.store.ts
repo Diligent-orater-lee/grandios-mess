@@ -2,7 +2,40 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
 import { AuthService } from '../api/auth-api.service';
-import { AuthState, LoginRequest, RegisterRequest, User } from '../models';
+import { AuthState, LoginRequest, RegisterRequest, User, UserType } from '../models';
+
+// Navigation helper functions
+function navigateBasedOnUserType(userType: UserType, router: Router) {
+  switch (userType) {
+    case UserType.CLIENT:
+      router.navigate(['/']);
+      break;
+    case UserType.ADMIN:
+    case UserType.DELIVERY:
+      router.navigate(['/clients']);
+      break;
+    default:
+      router.navigate(['/']);
+      break;
+  }
+}
+
+function navigateBasedOnUserTypeIfNeeded(userType: UserType, currentPath: string, router: Router) {
+  // Only navigate if the current path doesn't match the user's expected path
+  switch (userType) {
+    case UserType.CLIENT:
+      if (currentPath !== '/' && currentPath !== '') {
+        router.navigate(['/']);
+      }
+      break;
+    case UserType.ADMIN:
+    case UserType.DELIVERY:
+      if (currentPath !== '/clients' && currentPath !== '/' && currentPath !== '') {
+        router.navigate(['/clients']);
+      }
+      break;
+  }
+}
 
 const initialState: AuthState = {
   user: null,
@@ -30,9 +63,9 @@ export const AuthStore = signalStore(
             localStorage.setItem('auth_user', JSON.stringify(response.user));
             sessionStorage.setItem('access_token', response.access_token);
             patchState(store, { user: response.user, accessToken: response.access_token, isAuthenticated: true, loading: false, error: null });
-            // Navigate to calendar page after successful login
-            console.log('Login successful, navigating to calendar...');
-            router.navigate(['/']);
+            // Navigate based on user type after successful login
+            console.log('Login successful, navigating based on user type...');
+            navigateBasedOnUserType(response.user.userType, router);
           },
           error: (error) => {
             patchState(store, {
@@ -52,9 +85,9 @@ export const AuthStore = signalStore(
             localStorage.setItem('auth_user', JSON.stringify(response.user));
             sessionStorage.setItem('access_token', response.access_token);
             patchState(store, { user: response.user, accessToken: response.access_token, isAuthenticated: true, loading: false, error: null });
-            // Navigate to calendar page after successful registration
-            console.log('Registration successful, navigating to calendar...');
-            router.navigate(['/']);
+            // Navigate based on user type after successful registration
+            console.log('Registration successful, navigating based on user type...');
+            navigateBasedOnUserType(response.user.userType, router);
           },
           error: (error) => {
             patchState(store, {
@@ -90,6 +123,12 @@ export const AuthStore = signalStore(
         const token = sessionStorage.getItem('access_token');
         if (token) sessionStorage.setItem('access_token', token);
         patchState(store, { user: existingUser, isAuthenticated: !!token, loading: false });
+        
+        // Navigate based on user type if authenticated
+        if (existingUser && token) {
+          const currentPath = router.url;
+          navigateBasedOnUserTypeIfNeeded(existingUser.userType, currentPath, router);
+        }
       },
 
       getAccessToken(): string | null {
@@ -115,6 +154,7 @@ export const AuthStore = signalStore(
           return null;
         }
       },
+
     };
   }),
   withHooks({

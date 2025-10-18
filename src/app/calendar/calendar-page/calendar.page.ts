@@ -1,16 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, ElementRef, inject, Injector, signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { ActivatedRoute, Router } from '@angular/router';
+import { delay, filter, fromEvent, map, startWith, switchMap } from 'rxjs';
+import { isTodayDate } from '../../shared/utils/date.helpers';
+import { AuthStore } from '../../store/features/auth.store';
 import { CalendarStore } from '../../store/features/calendar.store';
+import { MealType, UserType } from '../../store/models';
 import { DayCellComponent } from '../day-cell/day-cell.component';
-import { MealType } from '../../store/models';
 
 @Component({
   selector: 'app-calendar-page',
@@ -27,19 +32,55 @@ import { MealType } from '../../store/models';
     MatToolbarModule,
     DayCellComponent,
   ],
+  providers: [
+    CalendarStore
+  ],
   templateUrl: './calendar.page.html',
   styleUrl: './calendar.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalendarPageComponent {
-  protected readonly store = inject(CalendarStore);
+  private readonly store = inject(CalendarStore);
+  private readonly authStore = inject(AuthStore);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly injector = inject(Injector);
 
   protected readonly MealType = MealType;
+
+  protected readonly calendarGridRef = viewChild<ElementRef<HTMLElement>>('calendarGrid');
+
+  protected readonly todayISO = signal(new Date().toString().slice(0, 10));
+
+  constructor() {
+    this.store.setSelectedUserId(
+      this.route.paramMap.pipe(map(params => params.get('userId') || undefined))
+    );
+
+    toObservable(this.calendarGridRef).pipe(
+      filter(Boolean),
+      filter(() => this.view() === "month"),
+      switchMap(() => fromEvent(window, 'resize').pipe(startWith(null), map(() => window.innerWidth <= 960))),
+      filter(Boolean),
+      delay(20),
+      takeUntilDestroyed()
+    ).subscribe(() => {
+        afterNextRender(() => {
+          this.scrollToToday();
+        }, { injector: this.injector });
+    });
+  }
 
   protected view = computed(() => this.store.view());
   protected loading = computed(() => this.store.loading());
   protected month = computed(() => this.store.monthData?.());
   protected week = computed(() => this.store.weekData?.());
+  protected selectedUserId = computed(() => this.store.selectedUserId());
+  protected currentUser = computed(() => this.authStore.user());
+  protected isAdminOrDelivery = computed(() => {
+    const user = this.currentUser();
+    return user?.userType === UserType.ADMIN || user?.userType === UserType.DELIVERY;
+  });
 
   // UI helpers
   protected readonly mealLabel: Record<MealType, string> = {
@@ -54,18 +95,17 @@ export class CalendarPageComponent {
     [MealType.Dinner]: '20:00',
   } as const;
 
-  protected todayISO = new Date().toISOString().slice(0, 10);
 
   protected todayMeals = computed(() => {
     const m = this.month();
     const w = this.week();
     const source = m?.days ?? w?.days ?? [];
-    const today = source.find(d => d.dateISO === this.todayISO);
+    const today = source.find(d => isTodayDate(d.dateISO));
     return today?.meals ?? [];
   });
 
   protected weekdayNames = computed(() => {
-    const names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const start = this.store.weekStartsOn();
     const arr: string[] = [];
     for (let i = 0; i < 7; i++) arr.push(names[(start + i) % 7]);
@@ -115,6 +155,29 @@ export class CalendarPageComponent {
 
   protected isInCurrentMonth(dateISO: string, displayMonth: number): boolean {
     return new Date(dateISO).getMonth() === displayMonth;
+  }
+
+  protected goBackToClients(): void {
+    this.router.navigate(['/clients']);
+  }
+
+  protected navigateToPatterns(): void {
+    this.router.navigate(['/patterns']);
+  }
+
+
+  private scrollToToday(): void {
+    const calendarGrid = this.calendarGridRef();
+    if (!calendarGrid?.nativeElement) return;
+
+    const todayElement = calendarGrid.nativeElement.querySelector(`[data-date="${this.todayISO()}"]`);
+    if (todayElement) {
+      todayElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center'
+      });
+    }
   }
 }
 

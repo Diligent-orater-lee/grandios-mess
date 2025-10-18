@@ -1,8 +1,10 @@
-import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, catchError, throwError } from 'rxjs';
-import { LoginRequest, RegisterRequest, AuthResponse } from '../models';
+import { Injectable, inject } from '@angular/core';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { AuthResponse, LoginRequest, RegisterRequest } from '../models';
+
+export const TOKEN_REFRESH_URL = `${environment.apiUrl}/auth/refresh`
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +38,6 @@ export class AuthService {
   }
 
   refresh(refreshToken: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/refresh`, { refresh_token: refreshToken });
+    return this.http.post<AuthResponse>(TOKEN_REFRESH_URL, { refresh_token: refreshToken });
   }
 }

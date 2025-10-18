@@ -1,4 +1,4 @@
-<div class="cell" [class.outside]="!inCurrentMonth" [class.completed]="allServed">
+<div class="cell" [class.outside]="!inCurrentMonth" [class.completed]="allServed" [class.today]="isToday()">
   <div class="cell-header">
     <div class="date">
       <mat-icon class="tick" *ngIf="allServed">check_circle</mat-icon>

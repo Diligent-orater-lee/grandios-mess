@@ -1,0 +1,38 @@
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  .left,
+  .right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+  }
+}
+
+.content {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 64px);
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .content {
+    padding: 16px;
+  }
+}

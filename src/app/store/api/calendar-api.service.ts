@@ -28,8 +28,11 @@ export class CalendarApiService {
     return this.http.post<ApiResponse<CalendarMonth>>(`${this.apiUrl}/calendar/month`, requestBody);
   }
 
-  public getWeek(startDateISO: string): Observable<ApiResponse<CalendarWeek>> {
-    const params = { startDateISO };
+  public getWeek(startDateISO: string, userId?: string): Observable<ApiResponse<CalendarWeek>> {
+    const params: any = { startDateISO };
+    if (userId) {
+      params.userId = userId;
+    }
     return this.http.get<ApiResponse<CalendarWeek>>(`${this.apiUrl}/calendar/week`, { params });
   }
 
@@ -37,6 +40,4 @@ export class CalendarApiService {
     return this.http.post<ApiResponse<DaySchedule>>(`${this.apiUrl}/calendar/toggle`, req);
   }
 }
-
-
 

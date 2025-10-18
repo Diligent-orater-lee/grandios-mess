@@ -9,6 +9,17 @@
 
 .cell.outside { opacity: .5; }
 
+.cell.today {
+  border-color: #1976d2;
+  background: #e3f2fd !important;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
+}
+
+.cell.today .cell-header .date {
+  color: #1976d2;
+  font-weight: 700;
+}
+
 .cell-header { padding: 6px 8px; border-bottom: 1px dashed #e0e0e0; }
 .cell-header .date { font-weight: 600; color: rgba(0,0,0,.74); display: flex; align-items: center; gap: 6px; }
 .cell-header .tick { color: #2e7d32; font-size: 18px; }
