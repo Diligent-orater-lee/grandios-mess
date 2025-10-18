@@ -50,7 +50,7 @@ export class ClientListComponent implements OnInit {
 
   // Signals for component state
   protected readonly searchTerm = signal('');
-  protected readonly displayedColumns = signal(['username', 'email', 'name', 'userType', 'createdAt', 'actions']);
+  protected readonly displayedColumns = signal(['name', 'actions']);
 
   // Computed signals
   protected readonly clients = computed(() => this.userStore.clients());
@@ -106,10 +106,6 @@ export class ClientListComponent implements OnInit {
 
   protected formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString();
-  }
-
-  protected getUserTypeDisplay(userType: string): string {
-    return userType.charAt(0).toUpperCase() + userType.slice(1).toLowerCase();
   }
 
   protected viewClientCalendar(client: UserListItem): void {

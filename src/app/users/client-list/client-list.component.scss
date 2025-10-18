@@ -15,7 +15,7 @@ mat-card-header {
   color: white;
   margin: -24px -24px 24px -24px;
   padding: 24px;
-  
+
   mat-card-title {
     display: flex;
     align-items: center;
@@ -23,14 +23,14 @@ mat-card-header {
     font-size: 1.5rem;
     font-weight: 600;
     margin: 0;
-    
+
     mat-icon {
       font-size: 1.75rem;
       width: 1.75rem;
       height: 1.75rem;
     }
   }
-  
+
   mat-card-subtitle {
     color: rgba(255, 255, 255, 0.8);
     margin: 8px 0 0 0;
@@ -44,16 +44,16 @@ mat-card-header {
   align-items: center;
   margin-bottom: 24px;
   flex-wrap: wrap;
-  
+
   .search-field {
     flex: 1;
     min-width: 300px;
   }
-  
+
   button {
     height: 56px;
     min-width: 120px;
-    
+
     mat-icon {
       margin-right: 8px;
     }
@@ -70,7 +70,7 @@ mat-card-header {
   border-radius: 8px;
   color: #c62828;
   margin-bottom: 16px;
-  
+
   mat-icon {
     font-size: 1.25rem;
     width: 1.25rem;
@@ -85,7 +85,7 @@ mat-card-header {
   justify-content: center;
   padding: 48px;
   gap: 16px;
-  
+
   p {
     margin: 0;
     color: #666;
@@ -103,29 +103,31 @@ mat-card-header {
 .clients-table {
   width: 100%;
   background: white;
-  
+
   th {
     background-color: #f5f5f5;
     font-weight: 600;
     color: #333;
     border-bottom: 2px solid #e0e0e0;
+    text-align: center;
   }
-  
+
   td {
     border-bottom: 1px solid #f0f0f0;
+    text-align: center;
   }
-  
+
   tr:hover {
     background-color: #f8f9fa;
   }
-  
+
   .username-cell,
   .email-cell,
   .date-cell {
     display: flex;
     align-items: center;
     gap: 8px;
-    
+
     mat-icon {
       font-size: 1rem;
       width: 1rem;
@@ -133,15 +135,15 @@ mat-card-header {
       color: #666;
     }
   }
-  
+
   .user-icon {
     color: #2196f3 !important;
   }
-  
+
   .email-icon {
     color: #ff9800 !important;
   }
-  
+
   .date-icon {
     color: #4caf50 !important;
   }
@@ -155,17 +157,17 @@ mat-card-header {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  
+
   &.user-type-admin {
     background-color: #e3f2fd;
     color: #1976d2;
   }
-  
+
   &.user-type-client {
     background-color: #e8f5e8;
     color: #388e3c;
   }
-  
+
   &.user-type-delivery {
     background-color: #fff3e0;
     color: #f57c00;
@@ -185,7 +187,7 @@ mat-card-header {
   justify-content: center;
   padding: 48px;
   text-align: center;
-  
+
   .empty-icon {
     font-size: 4rem;
     width: 4rem;
@@ -193,14 +195,14 @@ mat-card-header {
     color: #ccc;
     margin-bottom: 16px;
   }
-  
+
   h3 {
     margin: 0 0 8px 0;
     color: #666;
     font-size: 1.25rem;
     font-weight: 500;
   }
-  
+
   p {
     margin: 0;
     color: #999;
@@ -215,27 +217,27 @@ mat-card-header {
   .client-list-container {
     padding: 16px;
   }
-  
+
   .search-actions-bar {
     flex-direction: column;
     align-items: stretch;
-    
+
     .search-field {
       min-width: unset;
     }
   }
-  
+
   .clients-table {
     font-size: 0.875rem;
   }
-  
+
   .username-cell,
   .email-cell,
   .date-cell {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
-    
+
     mat-icon {
       display: none;
     }
@@ -245,20 +247,20 @@ mat-card-header {
 @media (max-width: 480px) {
   mat-card-header {
     padding: 16px;
-    
+
     mat-card-title {
       font-size: 1.25rem;
     }
-    
+
     mat-card-subtitle {
       font-size: 0.875rem;
     }
   }
-  
+
   .clients-table {
     font-size: 0.75rem;
   }
-  
+
   .user-type-badge {
     font-size: 0.625rem;
     padding: 2px 8px;
@@ -269,11 +271,11 @@ mat-card-header {
 .clickable-row {
   cursor: pointer;
   transition: background-color 0.2s ease;
-  
+
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
   }
-  
+
   &:active {
     background-color: rgba(0, 0, 0, 0.08);
   }
