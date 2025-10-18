@@ -1,4 +1,8 @@
 .toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
   .left,
   .right {
     display: flex;
@@ -23,22 +27,12 @@
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
+  min-height: calc(100vh - 64px);
+}
 
-  mat-card {
-    mat-card-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 1.5rem;
-      font-weight: 500;
-    }
-
-    mat-card-content {
-      p {
-        margin: 16px 0;
-        line-height: 1.6;
-        color: rgba(0, 0, 0, 0.87);
-      }
-    }
+// Responsive design
+@media (max-width: 768px) {
+  .content {
+    padding: 16px;
   }
 }

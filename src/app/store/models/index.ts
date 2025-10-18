@@ -74,16 +74,29 @@ export interface PatternDefinition {
   endDateISO?: string;
 }
 
-export interface CreatePatternRequest {
+export interface CreatePatternDto {
   name: string;
   active?: boolean;
   kind: PatternKind;
   isoWeekdays?: number[];
   meals: MealType[];
-  startDateISO?: string;
+  startDateISO: string;
   endDateISO?: string;
   userId?: string;
 }
+
+export interface UpdatePatternDto {
+  name?: string;
+  active?: boolean;
+  kind?: PatternKind;
+  isoWeekdays?: number[];
+  meals?: MealType[];
+  startDateISO?: string;
+  endDateISO?: string;
+}
+
+// Legacy alias for backward compatibility
+export type CreatePatternRequest = CreatePatternDto;
 
 export interface ToggleMealRequest {
   dateISO: string;

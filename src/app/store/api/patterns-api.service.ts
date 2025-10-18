@@ -1,33 +1,64 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiResponse, PatternDefinition, CreatePatternRequest } from '../models';
 import { environment } from '../../../environments/environment';
+import { ApiResponse, CreatePatternDto, PatternDefinition, UpdatePatternDto } from '../models';
 
-/**
- * PatternsApiService integrates with the real backend API for pattern CRUD operations.
- */
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class PatternsApiService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
-  public list(): Observable<ApiResponse<PatternDefinition[]>> {
-    return this.http.get<ApiResponse<PatternDefinition[]>>(`${this.apiUrl}/patterns`);
+  /**
+   * Create a new pattern
+   */
+  createPattern(pattern: CreatePatternDto): Observable<ApiResponse<PatternDefinition>> {
+    return this.http.post<ApiResponse<PatternDefinition>>(`${this.apiUrl}/patterns`, pattern);
   }
 
-  public create(input: CreatePatternRequest): Observable<ApiResponse<PatternDefinition>> {
-    return this.http.post<ApiResponse<PatternDefinition>>(`${this.apiUrl}/patterns`, input);
+  /**
+   * Get all patterns for the current user or a specific user (admin only)
+   */
+  getPatterns(userId?: string): Observable<ApiResponse<PatternDefinition[]>> {
+    let params = new HttpParams();
+    if (userId) {
+      params = params.set('userId', userId);
+    }
+    return this.http.get<ApiResponse<PatternDefinition[]>>(`${this.apiUrl}/patterns`, { params });
   }
 
-  public update(id: string, changes: Partial<PatternDefinition>): Observable<ApiResponse<PatternDefinition>> {
-    return this.http.patch<ApiResponse<PatternDefinition>>(`${this.apiUrl}/patterns/${id}`, changes);
+  /**
+   * Get a single pattern by ID
+   */
+  getPattern(id: string, userId?: string): Observable<ApiResponse<PatternDefinition>> {
+    let params = new HttpParams();
+    if (userId) {
+      params = params.set('userId', userId);
+    }
+    return this.http.get<ApiResponse<PatternDefinition>>(`${this.apiUrl}/patterns/${id}`, { params });
   }
 
-  public delete(id: string): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/patterns/${id}`);
+  /**
+   * Update an existing pattern
+   */
+  updatePattern(id: string, updates: UpdatePatternDto, userId?: string): Observable<ApiResponse<PatternDefinition>> {
+    let params = new HttpParams();
+    if (userId) {
+      params = params.set('userId', userId);
+    }
+    return this.http.patch<ApiResponse<PatternDefinition>>(`${this.apiUrl}/patterns/${id}`, updates, { params });
+  }
+
+  /**
+   * Delete a pattern
+   */
+  deletePattern(id: string, userId?: string): Observable<void> {
+    let params = new HttpParams();
+    if (userId) {
+      params = params.set('userId', userId);
+    }
+    return this.http.delete<void>(`${this.apiUrl}/patterns/${id}`, { params });
   }
 }
-
-
-

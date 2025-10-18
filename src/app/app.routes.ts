@@ -28,6 +28,11 @@ export const routes: Routes = [
     canActivate: [authGuard, allUsersGuard],
   },
   {
+    path: 'patterns/edit/:id',
+    loadComponent: () => import('./patterns/pattern-form/pattern-form.component').then(m => m.PatternFormComponent),
+    canActivate: [authGuard, allUsersGuard],
+  },
+  {
     path: '**',
     redirectTo: '',
   },

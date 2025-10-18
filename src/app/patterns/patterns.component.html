@@ -8,19 +8,20 @@
     <span class="title">{{ title }}</span>
   </div>
   <div class="right">
-    <!-- Future actions can go here -->
+    <button mat-icon-button (click)="onCreateNew()" aria-label="Create New Pattern">
+      <mat-icon>add</mat-icon>
+    </button>
   </div>
 </mat-toolbar>
 
 <section class="content">
-  <mat-card appearance="outlined">
-    <mat-card-title>
-      <mat-icon>pattern</mat-icon>
-      {{ title }}
-    </mat-card-title>
-    <mat-card-content>
-      <p>{{ description }}</p>
-      <p>This is where meal patterns will be managed.</p>
-    </mat-card-content>
-  </mat-card>
+  <app-pattern-list
+    [patterns]="patterns()"
+    [loading]="loading()"
+    [error]="error()"
+    (edit)="onEdit($event)"
+    (delete)="onDelete($event)"
+    (toggleActive)="onToggleActive($event)"
+    (createNew)="onCreateNew()">
+  </app-pattern-list>
 </section>
