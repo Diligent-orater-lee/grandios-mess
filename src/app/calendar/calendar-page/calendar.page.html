@@ -20,7 +20,7 @@
       </mat-button-toggle-group>
   </div>
   <div class="right">
-    <span class="today-badge">Today: {{ todayISO }}</span>
+    <span class="today-badge">Today: {{ todayISO() }}</span>
   </div>
   </mat-toolbar>
 
@@ -52,7 +52,7 @@
       <div class="weekday">{{ name }}</div>
     }
   </div>
-  <div class="calendar-grid month">
+  <div #calendarGrid class="calendar-grid month">
     @for (day of m.days; track day.dateISO; let idx = $index) {
       @if (day.inCurrentMonth === true) {
         <app-day-cell
@@ -62,6 +62,7 @@
           [inCurrentMonth]="true"
           (toggle)="toggleMeal($event.dateISO, $event.meal, $event.optedIn)"
           class="col-{{ idx % 7 }}"
+          [attr.data-date]="day.dateISO"
         />
       } @else {
         <div class="placeholder col-{{ idx % 7 }}"></div>
@@ -85,6 +86,7 @@
         [inCurrentMonth]="true"
         (toggle)="toggleMeal($event.dateISO, $event.meal, $event.optedIn)"
         class="col-{{ idx % 7 }}"
+        [attr.data-date]="day.dateISO"
       />
     }
   </div>

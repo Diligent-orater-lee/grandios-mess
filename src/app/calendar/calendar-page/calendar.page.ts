@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, Injector, signal, viewChild } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -9,7 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
+import { fromEvent, map, startWith } from 'rxjs';
 import { AuthStore } from '../../store/features/auth.store';
 import { CalendarStore } from '../../store/features/calendar.store';
 import { MealType, UserType } from '../../store/models';
@@ -38,17 +39,42 @@ import { DayCellComponent } from '../day-cell/day-cell.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalendarPageComponent {
-  protected readonly store = inject(CalendarStore);
-  protected readonly authStore = inject(AuthStore);
-  protected readonly route = inject(ActivatedRoute);
-  protected readonly router = inject(Router);
+  private readonly store = inject(CalendarStore);
+  private readonly authStore = inject(AuthStore);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly injector = inject(Injector);
 
   protected readonly MealType = MealType;
+
+  protected readonly calendarGridRef = viewChild<ElementRef<HTMLElement>>('calendarGrid');
+
+  protected readonly todayISO = signal(new Date().toISOString().slice(0, 10));
+  protected readonly isMobile = toSignal(
+    fromEvent(window, 'resize').pipe(
+      startWith(window.innerWidth),
+      map(() => window.innerWidth <= 960)
+    ),
+    { initialValue: typeof window !== 'undefined' ? window.innerWidth <= 960 : false }
+  );
 
   constructor() {
     this.store.setSelectedUserId(
       this.route.paramMap.pipe(map(params => params.get('userId') || undefined))
     );
+
+    // Effect to handle mobile scroll after component renders
+    effect(() => {
+      const view = this.view();
+      const isMobile = this.isMobile();
+      const viewContainer = this.calendarGridRef()
+
+      if (viewContainer && view === 'month' && isMobile) {
+        afterNextRender(() => {
+          this.scrollToToday();
+        }, {injector: this.injector});
+      }
+    });
   }
 
   protected view = computed(() => this.store.view());
@@ -75,13 +101,12 @@ export class CalendarPageComponent {
     [MealType.Dinner]: '20:00',
   } as const;
 
-  protected todayISO = new Date().toISOString().slice(0, 10);
 
   protected todayMeals = computed(() => {
     const m = this.month();
     const w = this.week();
     const source = m?.days ?? w?.days ?? [];
-    const today = source.find(d => d.dateISO === this.todayISO);
+    const today = source.find(d => d.dateISO === this.todayISO());
     return today?.meals ?? [];
   });
 
@@ -140,6 +165,21 @@ export class CalendarPageComponent {
 
   protected goBackToClients(): void {
     this.router.navigate(['/clients']);
+  }
+
+
+  private scrollToToday(): void {
+    const calendarGrid = this.calendarGridRef();
+    if (!calendarGrid?.nativeElement) return;
+
+    const todayElement = calendarGrid.nativeElement.querySelector(`[data-date="${this.todayISO()}"]`);
+    if (todayElement) {
+      todayElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center'
+      });
+    }
   }
 }
 

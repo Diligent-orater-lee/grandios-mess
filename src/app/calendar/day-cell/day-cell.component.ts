@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,6 +19,8 @@ export class DayCellComponent {
   @Input({ required: true }) inCurrentMonth!: boolean;
 
   @Output() toggle = new EventEmitter<{ dateISO: string; meal: MealType; optedIn: boolean }>();
+
+  protected readonly isToday = computed(() => this.day.dateISO === new Date().toISOString().slice(0, 10));
 
   protected onToggle(meal: MealType, checked: boolean): void {
     this.toggle.emit({ dateISO: this.day.dateISO, meal, optedIn: checked });
