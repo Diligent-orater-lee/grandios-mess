@@ -59,7 +59,7 @@
                 <div class="pattern-description">
                   {{ getPatternDescription(pattern) }}
                 </div>
-                
+
                 <div class="pattern-dates">
                   <mat-icon>schedule</mat-icon>
                   {{ getDateRangeText(pattern) }}
@@ -83,10 +83,6 @@
                   <button mat-menu-item (click)="onEdit(pattern)">
                     <mat-icon>edit</mat-icon>
                     Edit
-                  </button>
-                  <button mat-menu-item (click)="onToggleActive(pattern)">
-                    <mat-icon>pause</mat-icon>
-                    Deactivate
                   </button>
                   <button mat-menu-item (click)="onDelete(pattern.id)" class="delete-action">
                     <mat-icon>delete</mat-icon>
@@ -125,7 +121,7 @@
                 <div class="pattern-description">
                   {{ getPatternDescription(pattern) }}
                 </div>
-                
+
                 <div class="pattern-dates">
                   <mat-icon>schedule</mat-icon>
                   {{ getDateRangeText(pattern) }}
@@ -149,10 +145,6 @@
                   <button mat-menu-item (click)="onEdit(pattern)">
                     <mat-icon>edit</mat-icon>
                     Edit
-                  </button>
-                  <button mat-menu-item (click)="onToggleActive(pattern)">
-                    <mat-icon>play_arrow</mat-icon>
-                    Activate
                   </button>
                   <button mat-menu-item (click)="onDelete(pattern.id)" class="delete-action">
                     <mat-icon>delete</mat-icon>

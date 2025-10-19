@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap, filter, map } from 'rxjs';
+import { filter, map, pipe, switchMap, tap } from 'rxjs';
 import { PatternsApiService } from '../api/patterns-api.service';
 import { CreatePatternDto, PatternDefinition, UpdatePatternDto } from '../models';
 
@@ -41,16 +41,16 @@ export const PatternsStore = signalStore(
           }),
           tap({
             next: (response) => {
-              patchState(store, { 
-                patterns: response.data, 
-                loading: false, 
-                error: null 
+              patchState(store, {
+                patterns: response.data,
+                loading: false,
+                error: null
               });
             },
             error: (error) => {
-              patchState(store, { 
-                loading: false, 
-                error: error.error?.message || 'Failed to load patterns' 
+              patchState(store, {
+                loading: false,
+                error: error.error?.message || 'Failed to load patterns'
               });
             }
           })
@@ -68,16 +68,16 @@ export const PatternsStore = signalStore(
           tap({
             next: (response) => {
               const currentPatterns = store.patterns();
-              patchState(store, { 
+              patchState(store, {
                 patterns: [...currentPatterns, response.data],
-                loading: false, 
-                error: null 
+                loading: false,
+                error: null
               });
             },
             error: (error) => {
-              patchState(store, { 
-                loading: false, 
-                error: error.error?.message || 'Failed to create pattern' 
+              patchState(store, {
+                loading: false,
+                error: error.error?.message || 'Failed to create pattern'
               });
             }
           })
@@ -94,19 +94,19 @@ export const PatternsStore = signalStore(
           tap({
             next: (response) => {
               const currentPatterns = store.patterns();
-              const updatedPatterns = currentPatterns.map(p => 
+              const updatedPatterns = currentPatterns.map(p =>
                 p.id === response.data.id ? response.data : p
               );
-              patchState(store, { 
+              patchState(store, {
                 patterns: updatedPatterns,
-                loading: false, 
-                error: null 
+                loading: false,
+                error: null
               });
             },
             error: (error) => {
-              patchState(store, { 
-                loading: false, 
-                error: error.error?.message || 'Failed to update pattern' 
+              patchState(store, {
+                loading: false,
+                error: error.error?.message || 'Failed to update pattern'
               });
             }
           })
@@ -123,16 +123,16 @@ export const PatternsStore = signalStore(
                 next: () => {
                   const currentPatterns = store.patterns();
                   const filteredPatterns = currentPatterns.filter(p => p.id !== id);
-                  patchState(store, { 
+                  patchState(store, {
                     patterns: filteredPatterns,
-                    loading: false, 
-                    error: null 
+                    loading: false,
+                    error: null
                   });
                 },
                 error: (error) => {
-                  patchState(store, { 
-                    loading: false, 
-                    error: error.error?.message || 'Failed to delete pattern' 
+                  patchState(store, {
+                    loading: false,
+                    error: error.error?.message || 'Failed to delete pattern'
                   });
                 }
               })
@@ -154,16 +154,16 @@ export const PatternsStore = signalStore(
           }),
           tap({
             next: (response) => {
-              patchState(store, { 
+              patchState(store, {
                 currentPattern: response.data,
-                loading: false, 
-                error: null 
+                loading: false,
+                error: null
               });
             },
             error: (error) => {
-              patchState(store, { 
-                loading: false, 
-                error: error.error?.message || 'Failed to load pattern' 
+              patchState(store, {
+                loading: false,
+                error: error.error?.message || 'Failed to load pattern'
               });
             }
           })
@@ -181,45 +181,16 @@ export const PatternsStore = signalStore(
           }),
           tap({
             next: (response) => {
-              patchState(store, { 
+              patchState(store, {
                 currentPattern: response.data,
-                loading: false, 
-                error: null 
+                loading: false,
+                error: null
               });
             },
             error: (error) => {
-              patchState(store, { 
-                loading: false, 
-                error: error.error?.message || 'Failed to load pattern' 
-              });
-            }
-          })
-        )
-      ),
-
-      togglePatternActive: rxMethod<{ id: string; active: boolean }>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap(({ id, active }) => {
-            const userId = store.selectedUserId();
-            return api.updatePattern(id, { active }, userId);
-          }),
-          tap({
-            next: (response) => {
-              const currentPatterns = store.patterns();
-              const updatedPatterns = currentPatterns.map(p => 
-                p.id === response.data.id ? response.data : p
-              );
-              patchState(store, { 
-                patterns: updatedPatterns,
-                loading: false, 
-                error: null 
-              });
-            },
-            error: (error) => {
-              patchState(store, { 
-                loading: false, 
-                error: error.error?.message || 'Failed to toggle pattern' 
+              patchState(store, {
+                loading: false,
+                error: error.error?.message || 'Failed to load pattern'
               });
             }
           })

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -7,7 +7,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { PatternDefinition, PatternKind, MealType } from '../../store/models';
+import { MealType, PatternDefinition, PatternKind } from '../../store/models';
 
 @Component({
   selector: 'app-pattern-list',
@@ -35,15 +35,14 @@ export class PatternListComponent {
   // Outputs
   readonly edit = output<PatternDefinition>();
   readonly delete = output<string>();
-  readonly toggleActive = output<{ id: string; active: boolean }>();
   readonly createNew = output<void>();
 
   // Computed signals
   protected readonly hasPatterns = computed(() => this.patterns().length > 0);
-  protected readonly activePatterns = computed(() => 
+  protected readonly activePatterns = computed(() =>
     this.patterns().filter(p => p.active)
   );
-  protected readonly inactivePatterns = computed(() => 
+  protected readonly inactivePatterns = computed(() =>
     this.patterns().filter(p => !p.active)
   );
 
@@ -75,7 +74,7 @@ export class PatternListComponent {
   protected getPatternDescription(pattern: PatternDefinition): string {
     const { kind, meals, isoWeekdays } = pattern.rule;
     const mealLabels = meals.map(meal => this.getMealTypeLabel(meal)).join(', ');
-    
+
     switch (kind) {
       case PatternKind.Daily:
         return `Every day: ${mealLabels}`;
@@ -94,12 +93,12 @@ export class PatternListComponent {
   protected getDateRangeText(pattern: PatternDefinition): string {
     const { startDateISO, endDateISO } = pattern;
     const startDate = startDateISO ? new Date(startDateISO).toLocaleDateString() : 'Unknown';
-    
+
     if (endDateISO) {
       const endDate = new Date(endDateISO).toLocaleDateString();
       return `${startDate} - ${endDate}`;
     }
-    
+
     return `From ${startDate}`;
   }
 
@@ -109,10 +108,6 @@ export class PatternListComponent {
 
   protected onDelete(patternId: string): void {
     this.delete.emit(patternId);
-  }
-
-  protected onToggleActive(pattern: PatternDefinition): void {
-    this.toggleActive.emit({ id: pattern.id, active: !pattern.active });
   }
 
   protected onCreateNew(): void {
