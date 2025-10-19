@@ -30,6 +30,11 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+
+  mat-chip-option {
+  pointer-events: none;
+  cursor: default;
+}
 }
 
 .center {

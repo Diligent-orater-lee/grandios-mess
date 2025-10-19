@@ -2,12 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { Location } from '@angular/common';
-import { PatternsStore } from '../store/features/patterns.store';
 import { AuthStore } from '../store/features/auth.store';
+import { PatternsStore } from '../store/features/patterns.store';
 import { PatternDefinition, UserType } from '../store/models';
 import { PatternListComponent } from './pattern-list/pattern-list.component';
 
@@ -22,13 +21,11 @@ import { PatternListComponent } from './pattern-list/pattern-list.component';
     MatSnackBarModule,
     PatternListComponent,
   ],
-  providers: [PatternsStore],
   templateUrl: './patterns.component.html',
   styleUrl: './patterns.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PatternsComponent {
-  private readonly location = inject(Location);
   private readonly router = inject(Router);
   private readonly patternsStore = inject(PatternsStore);
   private readonly authStore = inject(AuthStore);
@@ -50,7 +47,7 @@ export class PatternsComponent {
   }
 
   protected goBack(): void {
-    this.location.back();
+    this.router.navigate(['/']);
   }
 
   protected onCreateNew(): void {
@@ -66,13 +63,6 @@ export class PatternsComponent {
       this.patternsStore.deletePattern(patternId);
       this.showSuccessMessage('Pattern deleted successfully');
     }
-  }
-
-  protected onToggleActive(data: { id: string; active: boolean }): void {
-    this.patternsStore.togglePatternActive(data);
-    this.showSuccessMessage(
-      data.active ? 'Pattern activated' : 'Pattern deactivated'
-    );
   }
 
   private showSuccessMessage(message: string): void {

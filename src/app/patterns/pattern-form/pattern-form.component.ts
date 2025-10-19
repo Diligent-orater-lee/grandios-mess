@@ -1,26 +1,22 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, DestroyRef } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Location } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { switchMap } from 'rxjs';
-import { CreatePatternDto, MealType, PatternDefinition, PatternKind } from '../../store/models';
+import { filter, switchMap, take } from 'rxjs';
 import { PatternsStore } from '../../store/features/patterns.store';
+import { CreatePatternDto, MealType, PatternKind } from '../../store/models';
 
 @Component({
   selector: 'app-pattern-form',
@@ -34,15 +30,12 @@ import { PatternsStore } from '../../store/features/patterns.store';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatSlideToggleModule,
-    MatStepperModule,
     MatIconModule,
     MatCardModule,
     MatNativeDateModule,
     MatToolbarModule,
     MatSnackBarModule,
   ],
-  providers: [PatternsStore],
   templateUrl: './pattern-form.component.html',
   styleUrl: './pattern-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,7 +44,6 @@ export class PatternFormComponent {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly location = inject(Location);
   private readonly patternsStore = inject(PatternsStore);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -61,17 +53,17 @@ export class PatternFormComponent {
   protected readonly loading = computed(() => this.patternsStore.loading());
   protected readonly error = computed(() => this.patternsStore.error());
   protected readonly isEditMode = computed(() => !!this.pattern());
-  
+
+  private readonly isLoading$ = toObservable(this.loading);
+
   // Form created from computed
   protected readonly form = computed(() => {
     const currentPattern = this.pattern();
     return this.fb.group({
       name: [currentPattern?.name || '', [Validators.required, Validators.minLength(3)]],
-      active: [currentPattern?.active ?? true],
       kind: [currentPattern?.rule?.kind || PatternKind.Daily, Validators.required],
       isoWeekdays: [currentPattern?.rule?.isoWeekdays || []],
       meals: [currentPattern?.rule?.meals || [], [Validators.required, Validators.minLength(1)]],
-      startDateISO: [currentPattern?.startDateISO ? new Date(currentPattern.startDateISO) : '', Validators.required],
       endDateISO: [currentPattern?.endDateISO ? new Date(currentPattern.endDateISO) : ''],
     });
   });
@@ -104,7 +96,7 @@ export class PatternFormComponent {
 
   // Computed signals
   protected readonly selectedKind = signal<PatternKind>(PatternKind.Daily);
-  protected readonly requiresSpecificDays = computed(() => 
+  protected readonly requiresSpecificDays = computed(() =>
     this.selectedKind() === PatternKind.SpecificWeekdays
   );
 
@@ -133,25 +125,20 @@ export class PatternFormComponent {
     const form = this.form();
     if (form.valid) {
       const formValue = form.value;
-      
+
       // Convert Date objects to ISO strings
-      const startDateISO = formValue.startDateISO instanceof Date 
-        ? formValue.startDateISO.toISOString() 
-        : formValue.startDateISO;
-      const endDateISO = formValue.endDateISO instanceof Date 
-        ? formValue.endDateISO.toISOString() 
+      const endDateISO = formValue.endDateISO instanceof Date
+        ? new Date(formValue.endDateISO.getTime() - (formValue.endDateISO.getTimezoneOffset() * 60000)).toISOString()
         : formValue.endDateISO;
-      
+
       const patternData: CreatePatternDto = {
         name: formValue.name || '',
-        active: formValue.active ?? true,
         kind: formValue.kind || PatternKind.Daily,
         isoWeekdays: formValue.kind === PatternKind.SpecificWeekdays ? (formValue.isoWeekdays || []) : undefined,
         meals: formValue.meals || [],
-        startDateISO: startDateISO || '',
         endDateISO: endDateISO || undefined,
       };
-      
+
       if (this.isEditMode()) {
         // Update existing pattern
         this.patternsStore.updatePattern({
@@ -162,11 +149,13 @@ export class PatternFormComponent {
         // Create new pattern
         this.patternsStore.createPattern(patternData);
       }
-      
+
       this.showSuccessMessage(
         this.isEditMode() ? 'Pattern updated successfully' : 'Pattern created successfully'
       );
-      this.router.navigate(['/patterns']);
+      this.isLoading$.pipe(filter(x => !x), take(1), takeUntilDestroyed(this.destroyRef)).subscribe(res => {
+        this.router.navigate(['/patterns']);
+      });
     }
   }
 
@@ -220,9 +209,6 @@ export class PatternFormComponent {
     return weekdays.map((d: number) => this.weekdays.find(w => w.value === d)?.label).join(', ') || 'None selected';
   });
 
-  protected readonly startDateText = computed(() => {
-    return this.form().get('startDateISO')?.value || 'Not specified';
-  });
 
   protected readonly endDateText = computed(() => {
     return this.form().get('endDateISO')?.value || '';
@@ -232,9 +218,6 @@ export class PatternFormComponent {
     return !!this.form().get('endDateISO')?.value;
   });
 
-  protected readonly isActiveText = computed(() => {
-    return this.form().get('active')?.value ? 'Active' : 'Inactive';
-  });
 
   private showSuccessMessage(message: string): void {
     this.snackBar.open(message, 'Close', {
