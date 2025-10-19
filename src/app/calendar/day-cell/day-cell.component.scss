@@ -7,7 +7,9 @@
   min-height: 120px;
 }
 
-.cell.outside { opacity: .5; }
+.cell.outside {
+  opacity: .5;
+}
 
 .cell.today {
   border-color: #1976d2;
@@ -20,24 +22,76 @@
   font-weight: 700;
 }
 
-.cell-header { padding: 6px 8px; border-bottom: 1px dashed #e0e0e0; }
-.cell-header .date { font-weight: 600; color: rgba(0,0,0,.74); display: flex; align-items: center; gap: 6px; }
-.cell-header .tick { color: #2e7d32; font-size: 18px; }
+.cell-header {
+  padding: 6px 8px;
+  border-bottom: 1px dashed #e0e0e0;
+}
 
-.cell-body { display: flex; flex-direction: column; gap: 6px; padding: 6px 8px 10px; }
-.cell.completed { border-color: #c8e6c9; background: #f1f8e9; }
+.cell-header .date {
+  font-weight: 600;
+  color: rgba(0, 0, 0, .74);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cell-header .tick {
+  color: #2e7d32;
+  font-size: 18px;
+}
+
+.cell-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 8px 10px;
+}
+
+.cell.completed {
+  border-color: #c8e6c9;
+  background: #f1f8e9;
+}
 
 .meal-inline {
-  display: grid; grid-template-columns: 10px 1fr auto; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; background: #fafafa; border: 1px solid #eee;
+  display: grid;
+  grid-template-columns: 10px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #fafafa;
+  border: 1px solid #eee;
+
+  ::ng-deep .readonly {
+    opacity: 0.6;
+    .mdc-switch__handle, .mdc-switch {
+      pointer-events: none;
+      cursor: default;
+    }
+  }
 }
-.meal-inline.optin .dot { background: #1976d2; }
-.meal-inline.optout .dot { background: #e53935; }
-.meal-inline .dot { width: 8px; height: 8px; border-radius: 999px; }
+
+.meal-inline.optin .dot {
+  background: #1976d2;
+}
+
+.meal-inline.optout .dot {
+  background: #e53935;
+}
+
+.meal-inline .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
 
 @media (max-width: 600px) {
-  .cell { min-height: auto; }
-  .meal-inline { grid-template-columns: 8px 1fr auto; padding: 6px; }
+  .cell {
+    min-height: auto;
+  }
+
+  .meal-inline {
+    grid-template-columns: 8px 1fr auto;
+    padding: 6px;
+  }
 }
-
-
-

@@ -65,9 +65,9 @@ export class CalendarPageComponent {
       delay(20),
       takeUntilDestroyed()
     ).subscribe(() => {
-        afterNextRender(() => {
-          this.scrollToToday();
-        }, { injector: this.injector });
+      afterNextRender(() => {
+        this.scrollToToday();
+      }, { injector: this.injector });
     });
   }
 
@@ -170,7 +170,12 @@ export class CalendarPageComponent {
     const calendarGrid = this.calendarGridRef();
     if (!calendarGrid?.nativeElement) return;
 
-    const todayElement = calendarGrid.nativeElement.querySelector(`[data-date="${this.todayISO()}"]`);
+    const today = new Date();
+    const dateISO = today.getFullYear() + '-' +
+      String(today.getMonth() + 1).padStart(2, '0') + '-' +
+      String(today.getDate()).padStart(2, '0');
+
+    const todayElement = calendarGrid.nativeElement.querySelector(`[data-date="${dateISO}"]`);
     if (todayElement) {
       todayElement.scrollIntoView({
         behavior: 'smooth',

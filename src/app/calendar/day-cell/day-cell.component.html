@@ -10,7 +10,7 @@
       <div class="meal-inline" [class.optin]="meal.optedIn" [class.optout]="!meal.optedIn">
         <span class="dot" aria-hidden="true"></span>
         <span class="text">{{ mealLabel[meal.meal] }} · {{ mealTime[meal.meal] }} · {{ meal.optedIn ? 'Opted in' : 'Opted out' }}</span>
-        <mat-slide-toggle [checked]="meal.optedIn" [disabled]="meal.isEditable === false" (change)="onToggle(meal.meal, $event.checked!)"></mat-slide-toggle>
+        <mat-slide-toggle [checked]="meal.optedIn" [class.readonly]="meal.isEditable === false" (change)="onToggle(meal.meal, $event.checked!)"></mat-slide-toggle>
       </div>
     }
   </div>
