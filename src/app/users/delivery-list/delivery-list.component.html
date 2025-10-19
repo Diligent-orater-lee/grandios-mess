@@ -1,12 +1,12 @@
-<div class="client-list-container">
-  <mat-card class="client-list-card">
+<div class="delivery-list-container">
+  <mat-card class="delivery-list-card">
     <mat-card-header>
       <mat-card-title>
-        <mat-icon>people</mat-icon>
-        Client List
+        <mat-icon>local_shipping</mat-icon>
+        Delivery Users List
       </mat-card-title>
       <mat-card-subtitle>
-        Manage and view client users
+        Manage and view delivery users
       </mat-card-subtitle>
     </mat-card-header>
 
@@ -16,18 +16,18 @@
         <button
           mat-stroked-button
           color="primary"
-          (click)="navigateToDeliveryUsers()"
+          (click)="navigateToClients()"
           class="nav-button"
         >
-          <mat-icon>local_shipping</mat-icon>
-          View Delivery Users
+          <mat-icon>people</mat-icon>
+          View Clients
         </button>
       </div>
 
       <!-- Search and Actions Bar -->
       <div class="search-actions-bar">
         <mat-form-field appearance="outline" class="search-field">
-          <mat-label>Search clients</mat-label>
+          <mat-label>Search delivery users</mat-label>
           <input
             matInput
             type="text"
@@ -61,32 +61,57 @@
       @if (loading()) {
         <div class="loading-container">
           <mat-spinner diameter="40"></mat-spinner>
-          <p>Loading clients...</p>
+          <p>Loading delivery users...</p>
         </div>
       }
 
-      <!-- Clients Table -->
-      @if (!loading() && clients().length > 0) {
+      <!-- Delivery Users Table -->
+      @if (!loading() && deliveryUsers().length > 0) {
         <div class="table-container">
-          <table mat-table [dataSource]="clients()" class="clients-table">
+          <table mat-table [dataSource]="deliveryUsers()" class="delivery-table">
             <!-- Name Column -->
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef>Full Name</th>
-              <td mat-cell *matCellDef="let client">
-                {{ client.name || 'N/A' }}
+              <td mat-cell *matCellDef="let deliveryUser">
+                <div class="name-cell">
+                  <mat-icon class="user-icon">person</mat-icon>
+                  {{ deliveryUser.name || 'N/A' }}
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef>Email</th>
+              <td mat-cell *matCellDef="let deliveryUser">
+                <div class="email-cell">
+                  <mat-icon class="email-icon">email</mat-icon>
+                  {{ deliveryUser.email }}
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Username Column -->
+            <ng-container matColumnDef="username">
+              <th mat-header-cell *matHeaderCellDef>Username</th>
+              <td mat-cell *matCellDef="let deliveryUser">
+                <div class="username-cell">
+                  <mat-icon class="user-icon">account_circle</mat-icon>
+                  {{ deliveryUser.username }}
+                </div>
               </td>
             </ng-container>
 
             <!-- Actions Column -->
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>Actions</th>
-              <td mat-cell *matCellDef="let client">
+              <td mat-cell *matCellDef="let deliveryUser">
                 <button
                   mat-icon-button
                   color="primary"
-                  (click)="viewClientCalendar(client); $event.stopPropagation()"
+                  (click)="viewDeliveryUserCalendar(deliveryUser); $event.stopPropagation()"
                   matTooltip="View Calendar"
-                  aria-label="View client calendar"
+                  aria-label="View delivery user calendar"
                 >
                   <mat-icon>calendar_today</mat-icon>
                 </button>
@@ -94,7 +119,7 @@
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns()" class="clickable-row" (click)="viewClientCalendar(row)"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns()" class="clickable-row" (click)="viewDeliveryUserCalendar(row)"></tr>
           </table>
         </div>
 
@@ -113,15 +138,15 @@
       }
 
       <!-- Empty State -->
-      @if (!loading() && clients().length === 0 && !error()) {
+      @if (!loading() && deliveryUsers().length === 0 && !error()) {
         <div class="empty-state">
-          <mat-icon class="empty-icon">people_outline</mat-icon>
-          <h3>No clients found</h3>
+          <mat-icon class="empty-icon">local_shipping</mat-icon>
+          <h3>No delivery users found</h3>
           <p>
             @if (searchTerm()) {
-              No clients match your search criteria. Try adjusting your search terms.
+              No delivery users match your search criteria. Try adjusting your search terms.
             } @else {
-              There are no clients to display at the moment.
+              There are no delivery users to display at the moment.
             }
           </p>
         </div>

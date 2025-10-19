@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './store/guards/auth.guard';
-import { adminAndDeliveryGuard, allUsersGuard } from './store/guards/user-type.guard';
+import { adminAndDeliveryGuard, adminOnlyGuard, allUsersGuard } from './store/guards/user-type.guard';
 
 export const routes: Routes = [
   {
@@ -11,6 +11,11 @@ export const routes: Routes = [
     path: 'clients',
     loadComponent: () => import('./users/client-list/client-list.component').then(m => m.ClientListComponent),
     canActivate: [authGuard, adminAndDeliveryGuard],
+  },
+  {
+    path: 'delivery',
+    loadComponent: () => import('./users/delivery-list/delivery-list.component').then(m => m.DeliveryListComponent),
+    canActivate: [authGuard, adminOnlyGuard],
   },
   {
     path: '',

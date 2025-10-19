@@ -1,17 +1,17 @@
-.client-list-container {
+.delivery-list-container {
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.client-list-card {
+.delivery-list-card {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   border-radius: 12px;
   overflow: hidden;
 }
 
 mat-card-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
   color: white;
   margin: -24px -24px 24px -24px;
   padding: 24px;
@@ -47,7 +47,7 @@ mat-card-header {
 
   .nav-button {
     height: 40px;
-    min-width: 180px;
+    min-width: 140px;
 
     mat-icon {
       margin-right: 8px;
@@ -117,7 +117,7 @@ mat-card-header {
   margin-bottom: 16px;
 }
 
-.clients-table {
+.delivery-table {
   width: 100%;
   background: white;
 
@@ -138,9 +138,9 @@ mat-card-header {
     background-color: #f8f9fa;
   }
 
-  .username-cell,
+  .name-cell,
   .email-cell,
-  .date-cell {
+  .username-cell {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -159,10 +159,6 @@ mat-card-header {
 
   .email-icon {
     color: #ff9800 !important;
-  }
-
-  .date-icon {
-    color: #4caf50 !important;
   }
 }
 
@@ -231,7 +227,7 @@ mat-card-header {
 
 // Responsive design
 @media (max-width: 768px) {
-  .client-list-container {
+  .delivery-list-container {
     padding: 16px;
   }
 
@@ -245,13 +241,13 @@ mat-card-header {
     }
   }
 
-  .clients-table {
+  .delivery-table {
     font-size: 0.875rem;
   }
 
-  .username-cell,
+  .name-cell,
   .email-cell,
-  .date-cell {
+  .username-cell {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
@@ -275,7 +271,7 @@ mat-card-header {
     }
   }
 
-  .clients-table {
+  .delivery-table {
     font-size: 0.75rem;
   }
 
