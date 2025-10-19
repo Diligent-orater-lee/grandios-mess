@@ -40,4 +40,18 @@ export class AuthService {
   refresh(refreshToken: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(TOKEN_REFRESH_URL, { refresh_token: refreshToken });
   }
+
+  /**
+   * Admin register new user (Admin only)
+   */
+  adminRegister(userData: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, userData)
+      .pipe(
+        tap(() => {}),
+        catchError(error => {
+          console.error('Admin registration error:', error);
+          return throwError(() => error);
+        })
+      );
+  }
 }

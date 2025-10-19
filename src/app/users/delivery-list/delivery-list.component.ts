@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -16,6 +17,7 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { AuthStore } from '../../store/features/auth.store';
 import { UserStore } from '../../store/features/user.store';
 import { UserListItem } from '../../store/models';
+import { AddUserComponent } from '../../shared/add-user/add-user.component';
 
 @Component({
   selector: 'app-delivery-list',
@@ -31,7 +33,8 @@ import { UserListItem } from '../../store/models';
     MatButtonModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatDialogModule
   ],
   providers: [
     UserStore
@@ -45,6 +48,7 @@ export class DeliveryListComponent implements OnInit {
   private readonly authStore = inject(AuthStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
 
   private readonly searchSubject = new Subject<string>();
 
@@ -114,5 +118,21 @@ export class DeliveryListComponent implements OnInit {
 
   protected navigateToClients(): void {
     this.router.navigate(['/clients']);
+  }
+
+  protected openAddUserDialog(): void {
+    const dialogRef = this.dialog.open(AddUserComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      disableClose: false,
+      data: { userType: 'DELIVERY' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Reload the delivery users list
+        this.loadDeliveryUsers();
+      }
+    });
   }
 }

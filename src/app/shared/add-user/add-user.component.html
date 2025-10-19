@@ -1,0 +1,127 @@
+<div class="add-user-container">
+  <mat-card class="add-user-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>person_add</mat-icon>
+        Add New User
+      </mat-card-title>
+      <mat-card-subtitle>
+        Create a new user account
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
+        <!-- Email Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email Address</mat-label>
+          <input
+            matInput
+            type="email"
+            formControlName="email"
+            placeholder="Enter email address"
+            [class.mat-form-field-invalid]="isFieldInvalid('email')"
+          />
+          <mat-icon matSuffix>email</mat-icon>
+          @if (isFieldInvalid('email')) {
+            <mat-error>{{ getFieldError('email') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Username Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="username"
+            placeholder="Enter username"
+            [class.mat-form-field-invalid]="isFieldInvalid('username')"
+          />
+          <mat-icon matSuffix>account_circle</mat-icon>
+          @if (isFieldInvalid('username')) {
+            <mat-error>{{ getFieldError('username') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Password Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            type="password"
+            formControlName="password"
+            placeholder="Enter password"
+            [class.mat-form-field-invalid]="isFieldInvalid('password')"
+          />
+          <mat-icon matSuffix>lock</mat-icon>
+          @if (isFieldInvalid('password')) {
+            <mat-error>{{ getFieldError('password') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Full Name Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Full Name</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="name"
+            placeholder="Enter full name"
+            [class.mat-form-field-invalid]="isFieldInvalid('name')"
+          />
+          <mat-icon matSuffix>person</mat-icon>
+          @if (isFieldInvalid('name')) {
+            <mat-error>{{ getFieldError('name') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- User Type Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>User Type</mat-label>
+          <mat-select formControlName="userType" [class.mat-form-field-invalid]="isFieldInvalid('userType')">
+            @for (userType of userTypes(); track userType.value) {
+              <mat-option [value]="userType.value">
+                {{ userType.label }}
+              </mat-option>
+            }
+          </mat-select>
+          <mat-icon matSuffix>group</mat-icon>
+          @if (isFieldInvalid('userType')) {
+            <mat-error>{{ getFieldError('userType') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button
+            type="button"
+            mat-stroked-button
+            color="warn"
+            (click)="onCancel()"
+            [disabled]="loading()"
+            class="cancel-button"
+          >
+            <mat-icon>cancel</mat-icon>
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            mat-raised-button
+            color="primary"
+            [disabled]="userForm.invalid || loading()"
+            class="submit-button"
+          >
+            @if (loading()) {
+              <mat-spinner diameter="20" class="button-spinner"></mat-spinner>
+            } @else {
+              <mat-icon>person_add</mat-icon>
+            }
+            Create User
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

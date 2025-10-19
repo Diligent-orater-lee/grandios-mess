@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -13,9 +14,10 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { AddUserComponent } from '../../shared/add-user/add-user.component';
 import { AuthStore } from '../../store/features/auth.store';
 import { UserStore } from '../../store/features/user.store';
-import { UserListItem } from '../../store/models';
+import { UserListItem, UserType } from '../../store/models';
 
 @Component({
   selector: 'app-client-list',
@@ -31,7 +33,8 @@ import { UserListItem } from '../../store/models';
     MatButtonModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatDialogModule
   ],
   providers: [
     UserStore
@@ -45,12 +48,13 @@ export class ClientListComponent implements OnInit {
   private readonly authStore = inject(AuthStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
 
   private readonly searchSubject = new Subject<string>();
 
   // Signals for component state
   protected readonly searchTerm = signal('');
-  protected readonly displayedColumns = signal(['name', 'actions']);
+  protected readonly displayedColumns = signal(['name', 'mealsToday', 'actions']);
 
   // Computed signals
   protected readonly clients = computed(() => this.userStore.clients());
@@ -58,6 +62,7 @@ export class ClientListComponent implements OnInit {
   protected readonly loading = computed(() => this.userStore.loading());
   protected readonly error = computed(() => this.userStore.error());
   protected readonly currentUser = computed(() => this.authStore.user());
+  protected readonly isAdmin = computed(() => this.currentUser()?.userType === UserType.ADMIN);
 
   constructor() {
     // Set up search debouncing with proper cleanup
@@ -114,5 +119,21 @@ export class ClientListComponent implements OnInit {
 
   protected navigateToDeliveryUsers(): void {
     this.router.navigate(['/delivery']);
+  }
+
+  protected openAddUserDialog(): void {
+    const dialogRef = this.dialog.open(AddUserComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      disableClose: false,
+      data: { userType: 'CLIENT' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Reload the clients list
+        this.loadClients();
+      }
+    });
   }
 }

@@ -45,12 +45,22 @@ mat-card-header {
   margin-bottom: 24px;
   flex-wrap: wrap;
 
-  .nav-button {
+  .nav-button,
+  .add-user-button {
     height: 40px;
     min-width: 140px;
 
     mat-icon {
       margin-right: 8px;
+    }
+  }
+
+  .add-user-button {
+    background-color: #ff9800;
+    color: white;
+
+    &:hover {
+      background-color: #f57c00;
     }
   }
 }
