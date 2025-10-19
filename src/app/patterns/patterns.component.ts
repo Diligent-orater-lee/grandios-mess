@@ -21,7 +21,6 @@ import { PatternListComponent } from './pattern-list/pattern-list.component';
     MatSnackBarModule,
     PatternListComponent,
   ],
-  providers: [PatternsStore],
   templateUrl: './patterns.component.html',
   styleUrl: './patterns.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

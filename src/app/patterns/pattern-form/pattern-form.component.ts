@@ -14,7 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs';
 import { PatternsStore } from '../../store/features/patterns.store';
 import { CreatePatternDto, MealType, PatternKind } from '../../store/models';
 
@@ -36,7 +36,6 @@ import { CreatePatternDto, MealType, PatternKind } from '../../store/models';
     MatToolbarModule,
     MatSnackBarModule,
   ],
-  providers: [PatternsStore],
   templateUrl: './pattern-form.component.html',
   styleUrl: './pattern-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +53,8 @@ export class PatternFormComponent {
   protected readonly loading = computed(() => this.patternsStore.loading());
   protected readonly error = computed(() => this.patternsStore.error());
   protected readonly isEditMode = computed(() => !!this.pattern());
+
+  private readonly isLoading$ = toObservable(this.loading);
 
   // Form created from computed
   protected readonly form = computed(() => {
@@ -127,7 +128,7 @@ export class PatternFormComponent {
 
       // Convert Date objects to ISO strings
       const endDateISO = formValue.endDateISO instanceof Date
-        ? formValue.endDateISO.toISOString()
+        ? new Date(formValue.endDateISO.getTime() - (formValue.endDateISO.getTimezoneOffset() * 60000)).toISOString()
         : formValue.endDateISO;
 
       const patternData: CreatePatternDto = {
@@ -152,7 +153,9 @@ export class PatternFormComponent {
       this.showSuccessMessage(
         this.isEditMode() ? 'Pattern updated successfully' : 'Pattern created successfully'
       );
-      this.router.navigate(['/patterns']);
+      this.isLoading$.pipe(filter(x => !x), take(1), takeUntilDestroyed(this.destroyRef)).subscribe(res => {
+        this.router.navigate(['/patterns']);
+      });
     }
   }
 
