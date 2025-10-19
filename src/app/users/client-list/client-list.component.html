@@ -1,15 +1,5 @@
 <div class="client-list-container">
   <mat-card class="client-list-card">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>people</mat-icon>
-        Client List
-      </mat-card-title>
-      <mat-card-subtitle>
-        Manage and view client users
-      </mat-card-subtitle>
-    </mat-card-header>
-
     <mat-card-content>
       @if (isAdmin()) {
         <!-- Navigation and Actions Bar -->
@@ -50,7 +40,7 @@
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
 
-        <button
+        <!-- <button
           mat-raised-button
           color="primary"
           (click)="onRefresh()"
@@ -58,7 +48,7 @@
         >
           <mat-icon>refresh</mat-icon>
           Refresh
-        </button>
+        </button> -->
       </div>
 
       <!-- Error Display -->
@@ -91,9 +81,18 @@
 
             <!-- Meals Today Column -->
             <ng-container matColumnDef="mealsToday">
-              <th mat-header-cell *matHeaderCellDef>Meals Today</th>
+              <th mat-header-cell *matHeaderCellDef>Meals</th>
               <td mat-cell *matCellDef="let client">
-                <app-meals-view [daySchedule]="client.todayMeals"></app-meals-view>
+                <div class="meals-config">
+                  <div class="config">
+                    <h3>Today</h3>
+                    <app-meals-view [daySchedule]="client.todayMeals"></app-meals-view>
+                  </div>
+                  <div class="config">
+                    <h3>Tomorrow</h3>
+                    <app-meals-view [daySchedule]="client.tomorrowMeals"></app-meals-view>
+                  </div>
+                </div>
               </td>
             </ng-container>
 

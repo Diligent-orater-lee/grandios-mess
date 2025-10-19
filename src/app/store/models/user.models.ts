@@ -14,6 +14,7 @@ export interface UserListItem {
 
 export interface CustomerListItem extends UserListItem {
   todayMeals: DaySchedule;
+  tomorrowMeals: DaySchedule;
 }
 
 export interface PaginationParams {

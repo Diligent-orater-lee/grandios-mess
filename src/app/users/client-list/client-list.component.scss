@@ -1,5 +1,4 @@
 .client-list-container {
-  padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -8,34 +7,6 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   border-radius: 12px;
   overflow: hidden;
-}
-
-mat-card-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  margin: -24px -24px 24px -24px;
-  padding: 24px;
-
-  mat-card-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0;
-
-    mat-icon {
-      font-size: 1.75rem;
-      width: 1.75rem;
-      height: 1.75rem;
-    }
-  }
-
-  mat-card-subtitle {
-    color: rgba(255, 255, 255, 0.8);
-    margin: 8px 0 0 0;
-    font-size: 1rem;
-  }
 }
 
 .navigation-actions-bar {
@@ -68,8 +39,7 @@ mat-card-header {
 .search-actions-bar {
   display: flex;
   gap: 16px;
-  align-items: center;
-  margin-bottom: 24px;
+  align-items: flex-start;
   flex-wrap: wrap;
 
   .search-field {
@@ -241,14 +211,11 @@ mat-card-header {
 
 // Responsive design
 @media (max-width: 768px) {
-  .client-list-container {
-    padding: 16px;
-  }
-
   .navigation-actions-bar,
   .search-actions-bar {
     flex-direction: column;
     align-items: stretch;
+    gap: 0;
 
     .search-field {
       min-width: unset;
@@ -272,19 +239,16 @@ mat-card-header {
   }
 }
 
-@media (max-width: 480px) {
-  mat-card-header {
-    padding: 16px;
+.meals-config {
+  display: flex;
+  justify-content: center;
 
-    mat-card-title {
-      font-size: 1.25rem;
-    }
-
-    mat-card-subtitle {
-      font-size: 0.875rem;
-    }
+  h3 {
+    text-align: start;
   }
+}
 
+@media (max-width: 480px) {
   .clients-table {
     font-size: 0.75rem;
   }

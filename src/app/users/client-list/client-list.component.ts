@@ -56,7 +56,7 @@ export class ClientListComponent implements OnInit {
 
   // Signals for component state
   protected readonly searchTerm = signal('');
-  protected readonly displayedColumns = signal(['name', 'mealsToday', 'actions']);
+  protected readonly displayedColumns = signal(['name', 'mealsToday']);
 
   // Computed signals
   protected readonly clients = computed(() => this.userStore.clients());
