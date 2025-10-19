@@ -14,14 +14,13 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { AddUserComponent } from '../../shared/add-user/add-user.component';
-import { MealsViewComponent } from '../../shared/meals-view/meals-view.component';
 import { AuthStore } from '../../store/features/auth.store';
 import { UserStore } from '../../store/features/user.store';
-import { UserListItem, UserType } from '../../store/models';
+import { UserListItem } from '../../store/models';
+import { AddUserComponent } from '../../shared/add-user/add-user.component';
 
 @Component({
-  selector: 'app-client-list',
+  selector: 'app-delivery-list',
   standalone: true,
   imports: [
     CommonModule,
@@ -35,17 +34,16 @@ import { UserListItem, UserType } from '../../store/models';
     MatCardModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
-    MatDialogModule,
-    MealsViewComponent
+    MatDialogModule
   ],
   providers: [
     UserStore
   ],
-  templateUrl: './client-list.component.html',
-  styleUrls: ['./client-list.component.scss'],
+  templateUrl: './delivery-list.component.html',
+  styleUrls: ['./delivery-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClientListComponent implements OnInit {
+export class DeliveryListComponent implements OnInit {
   private readonly userStore = inject(UserStore);
   private readonly authStore = inject(AuthStore);
   private readonly destroyRef = inject(DestroyRef);
@@ -56,15 +54,14 @@ export class ClientListComponent implements OnInit {
 
   // Signals for component state
   protected readonly searchTerm = signal('');
-  protected readonly displayedColumns = signal(['name', 'mealsToday', 'actions']);
+  protected readonly displayedColumns = signal(['name', 'email', 'username', 'actions']);
 
   // Computed signals
-  protected readonly clients = computed(() => this.userStore.clients());
-  protected readonly pagination = computed(() => this.userStore.clientsPagination());
+  protected readonly deliveryUsers = computed(() => this.userStore.delivery());
+  protected readonly pagination = computed(() => this.userStore.deliveryPagination());
   protected readonly loading = computed(() => this.userStore.loading());
   protected readonly error = computed(() => this.userStore.error());
   protected readonly currentUser = computed(() => this.authStore.user());
-  protected readonly isAdmin = computed(() => this.currentUser()?.userType === UserType.ADMIN);
 
   constructor() {
     // Set up search debouncing with proper cleanup
@@ -76,13 +73,13 @@ export class ClientListComponent implements OnInit {
       )
       .subscribe(searchTerm => {
         this.userStore.setSearchTerm(searchTerm);
-        this.loadClients();
+        this.loadDeliveryUsers();
       });
   }
 
   ngOnInit(): void {
     // Load initial data
-    this.loadClients();
+    this.loadDeliveryUsers();
   }
 
   protected onSearchChange(event: Event): void {
@@ -94,33 +91,33 @@ export class ClientListComponent implements OnInit {
   protected onPageChange(event: PageEvent): void {
     this.userStore.setCurrentPage(event.pageIndex + 1);
     this.userStore.setPageSize(event.pageSize);
-    this.loadClients();
+    this.loadDeliveryUsers();
   }
 
   protected onRefresh(): void {
-    this.loadClients();
+    this.loadDeliveryUsers();
   }
 
-  private loadClients(): void {
+  private loadDeliveryUsers(): void {
     const params = {
       page: this.userStore.currentPage(),
       limit: this.userStore.pageSize(),
       search: this.userStore.searchTerm() || undefined,
     };
 
-    this.userStore.loadClients(params);
+    this.userStore.loadDeliveryUsers(params);
   }
 
   protected formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString();
   }
 
-  protected viewClientCalendar(client: UserListItem): void {
-    this.router.navigate(['/calendar', client.id]);
+  protected viewDeliveryUserCalendar(deliveryUser: UserListItem): void {
+    this.router.navigate(['/calendar', deliveryUser.id]);
   }
 
-  protected navigateToDeliveryUsers(): void {
-    this.router.navigate(['/delivery']);
+  protected navigateToClients(): void {
+    this.router.navigate(['/clients']);
   }
 
   protected openAddUserDialog(): void {
@@ -128,13 +125,13 @@ export class ClientListComponent implements OnInit {
       width: '500px',
       maxWidth: '90vw',
       disableClose: false,
-      data: { userType: 'CLIENT' }
+      data: { userType: 'DELIVERY' }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Reload the clients list
-        this.loadClients();
+        // Reload the delivery users list
+        this.loadDeliveryUsers();
       }
     });
   }

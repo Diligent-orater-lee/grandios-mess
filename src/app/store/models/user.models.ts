@@ -1,4 +1,5 @@
 // User management models for the Grandios Mess application
+import { DaySchedule } from '.';
 import { UserType } from './auth.models';
 
 export interface UserListItem {
@@ -9,6 +10,10 @@ export interface UserListItem {
   userType: UserType;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface CustomerListItem extends UserListItem {
+  todayMeals: DaySchedule;
 }
 
 export interface PaginationParams {
@@ -30,7 +35,7 @@ export interface PaginatedResponse<T> {
 }
 
 export interface UserListState {
-  clients: UserListItem[];
+  clients: CustomerListItem[];
   delivery: UserListItem[];
   clientsPagination: PaginationInfo | null;
   deliveryPagination: PaginationInfo | null;
