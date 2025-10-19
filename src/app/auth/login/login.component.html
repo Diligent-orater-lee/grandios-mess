@@ -35,71 +35,10 @@
               </div>
             }
 
-            <button mat-raised-button color="primary" type="submit" 
-                    [disabled]="loginForm.invalid || authStore.loading()" 
+            <button mat-raised-button color="primary" type="submit"
+                    [disabled]="loginForm.invalid || authStore.loading()"
                     class="full-width">
               {{ authStore.loading() ? 'Signing in...' : 'Sign In' }}
-            </button>
-          </form>
-        </mat-tab>
-
-        <mat-tab label="Register">
-          <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="login-form">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" placeholder="Enter your email">
-              @if (registerForm.get('email')?.hasError('required')) {
-                <mat-error>
-                  Email is required
-                </mat-error>
-              }
-              @if (registerForm.get('email')?.hasError('email')) {
-                <mat-error>
-                  Please enter a valid email
-                </mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Username</mat-label>
-              <input matInput formControlName="username" placeholder="Enter your username">
-              @if (registerForm.get('username')?.hasError('required')) {
-                <mat-error>
-                  Username is required
-                </mat-error>
-              }
-              @if (registerForm.get('username')?.hasError('minlength')) {
-                <mat-error>
-                  Username must be at least 3 characters
-                </mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Password</mat-label>
-              <input matInput type="password" formControlName="password" placeholder="Enter your password">
-              @if (registerForm.get('password')?.hasError('required')) {
-                <mat-error>
-                  Password is required
-                </mat-error>
-              }
-              @if (registerForm.get('password')?.hasError('minlength')) {
-                <mat-error>
-                  Password must be at least 6 characters
-                </mat-error>
-              }
-            </mat-form-field>
-
-            @if (authStore.error()) {
-              <div class="error-message">
-                {{ authStore.error() }}
-              </div>
-            }
-
-            <button mat-raised-button color="primary" type="submit" 
-                    [disabled]="registerForm.invalid || authStore.loading()" 
-                    class="full-width">
-              {{ authStore.loading() ? 'Creating account...' : 'Create Account' }}
             </button>
           </form>
         </mat-tab>

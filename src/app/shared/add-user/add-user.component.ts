@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, EventEmitter, inject, OnInit, Output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, Output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -12,7 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from '../../store/api/auth-api.service';
-import { UserType } from '../../store/models';
+import { RegisterRequest, UserType } from '../../store/models';
 
 @Component({
   selector: 'app-add-user',
@@ -34,7 +34,7 @@ import { UserType } from '../../store/models';
   styleUrls: ['./add-user.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddUserComponent implements OnInit {
+export class AddUserComponent {
   private readonly authService = inject(AuthService);
   private readonly dialogRef = inject(MatDialogRef<AddUserComponent>);
   private readonly snackBar = inject(MatSnackBar);
@@ -51,28 +51,23 @@ export class AddUserComponent implements OnInit {
   ]);
 
   // Form
-  protected readonly userForm: FormGroup;
-
-  constructor() {
-    this.userForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      username: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      name: ['', [Validators.required]],
-      userType: [UserType.CLIENT, [Validators.required]]
-    });
-  }
-
-  ngOnInit(): void {
-    // Component initialization
-  }
+  protected readonly userForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    username: ['', [Validators.required, Validators.minLength(3)]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    name: ['', [Validators.required]],
+    userType: [UserType.CLIENT, [Validators.required]]
+  });
 
   protected onSubmit(): void {
     if (this.userForm.valid && !this.loading()) {
       this.loading.set(true);
-      
-      const formData = this.userForm.value;
-      
+
+      const formData = {
+        ...this.userForm.value,
+        username: this.userForm.value.username?.toLowerCase()
+      } as RegisterRequest;
+
       this.authService.adminRegister(formData)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
