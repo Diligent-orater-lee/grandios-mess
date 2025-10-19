@@ -1,0 +1,13 @@
+<div class="meals-container">
+  @for (mealItem of meals(); track mealItem.type) {
+    <div class="meal-item" 
+         [matTooltip]="getTooltipText(mealItem.meal, mealItem.label)"
+         matTooltipPosition="above">
+      <mat-icon [color]="getMealColor(mealItem.meal)" 
+                class="meal-icon">
+        {{ getMealIcon(mealItem.meal) }}
+      </mat-icon>
+      <span class="meal-label">{{ mealItem.label }}</span>
+    </div>
+  }
+</div>

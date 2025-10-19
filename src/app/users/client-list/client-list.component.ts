@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { AddUserComponent } from '../../shared/add-user/add-user.component';
+import { MealsViewComponent } from '../../shared/meals-view/meals-view.component';
 import { AuthStore } from '../../store/features/auth.store';
 import { UserStore } from '../../store/features/user.store';
 import { UserListItem, UserType } from '../../store/models';
@@ -34,7 +35,8 @@ import { UserListItem, UserType } from '../../store/models';
     MatCardModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
-    MatDialogModule
+    MatDialogModule,
+    MealsViewComponent
   ],
   providers: [
     UserStore

@@ -1,0 +1,61 @@
+.meals-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  min-width: 120px;
+}
+
+.meal-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.meal-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+}
+
+.meal-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+}
+
+// Responsive adjustments for smaller table cells
+@media (max-width: 768px) {
+  .meals-container {
+    min-width: 100px;
+    padding: 4px;
+  }
+  
+  .meal-item {
+    gap: 4px;
+  }
+  
+  .meal-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+  }
+  
+  .meal-label {
+    font-size: 11px;
+    max-width: 60px;
+  }
+}
