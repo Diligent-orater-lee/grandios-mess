@@ -10,7 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { delay, filter, fromEvent, map, startWith, switchMap } from 'rxjs';
+import { delay, filter, map } from 'rxjs';
 import { isTodayDate } from '../../shared/utils/date.helpers';
 import { AuthStore } from '../../store/features/auth.store';
 import { CalendarStore } from '../../store/features/calendar.store';
@@ -60,7 +60,7 @@ export class CalendarPageComponent {
     toObservable(this.calendarGridRef).pipe(
       filter(Boolean),
       filter(() => this.view() === "month"),
-      switchMap(() => fromEvent(window, 'resize').pipe(startWith(null), map(() => window.innerWidth <= 960))),
+      map(() => window.innerWidth <= 960),
       filter(Boolean),
       delay(20),
       takeUntilDestroyed()
