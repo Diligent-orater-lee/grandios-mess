@@ -80,7 +80,6 @@ export interface CreatePatternDto {
   kind: PatternKind;
   isoWeekdays?: number[];
   meals: MealType[];
-  startDateISO: string;
   endDateISO?: string;
   userId?: string;
 }
@@ -91,7 +90,6 @@ export interface UpdatePatternDto {
   kind?: PatternKind;
   isoWeekdays?: number[];
   meals?: MealType[];
-  startDateISO?: string;
   endDateISO?: string;
 }
 

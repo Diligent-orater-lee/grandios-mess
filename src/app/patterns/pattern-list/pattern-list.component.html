@@ -96,68 +96,6 @@
       </div>
     }
 
-    <!-- Inactive Patterns -->
-    @if (inactivePatterns().length > 0) {
-      <div class="patterns-section">
-        <h3 class="section-title">
-          <mat-icon>pause_circle</mat-icon>
-          Inactive Patterns ({{ inactivePatterns().length }})
-        </h3>
-        <div class="patterns-grid">
-          @for (pattern of inactivePatterns(); track pattern.id) {
-            <mat-card appearance="outlined" class="pattern-card inactive">
-              <mat-card-header>
-                <mat-card-title>{{ pattern.name }}</mat-card-title>
-                <mat-card-subtitle>
-                  <mat-chip-set>
-                    <mat-chip [color]="'warn'">
-                      {{ getPatternKindLabel(pattern.rule.kind) }}
-                    </mat-chip>
-                  </mat-chip-set>
-                </mat-card-subtitle>
-              </mat-card-header>
-
-              <mat-card-content>
-                <div class="pattern-description">
-                  {{ getPatternDescription(pattern) }}
-                </div>
-
-                <div class="pattern-dates">
-                  <mat-icon>schedule</mat-icon>
-                  {{ getDateRangeText(pattern) }}
-                </div>
-
-                <div class="pattern-meals">
-                  @for (meal of pattern.rule.meals; track meal) {
-                    <mat-chip [color]="'accent'">
-                      <mat-icon>restaurant</mat-icon>
-                      {{ getMealTypeLabel(meal) }}
-                    </mat-chip>
-                  }
-                </div>
-              </mat-card-content>
-
-              <mat-card-actions>
-                <button mat-icon-button [matMenuTriggerFor]="menu" [matTooltip]="'More actions'">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
-                  <button mat-menu-item (click)="onEdit(pattern)">
-                    <mat-icon>edit</mat-icon>
-                    Edit
-                  </button>
-                  <button mat-menu-item (click)="onDelete(pattern.id)" class="delete-action">
-                    <mat-icon>delete</mat-icon>
-                    Delete
-                  </button>
-                </mat-menu>
-              </mat-card-actions>
-            </mat-card>
-          }
-        </div>
-      </div>
-    }
-
     <!-- Create New Button -->
     <div class="create-button-container">
       <button mat-fab color="primary" (click)="onCreateNew()" [matTooltip]="'Create new pattern'">
