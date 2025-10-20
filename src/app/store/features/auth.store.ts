@@ -2,7 +2,8 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
 import { AuthService } from '../api/auth-api.service';
-import { AuthState, LoginRequest, RegisterRequest, User, UserType } from '../models';
+import { AuthResponse, AuthState, LoginRequest, RegisterRequest, User, UserType } from '../models';
+import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
 
 // Navigation helper functions
 function navigateBasedOnUserType(userType: UserType, router: Router) {
@@ -48,6 +49,18 @@ const initialState: AuthState = {
 export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
+  withMethods((store, router = inject(Router)) => ({
+    _loginSuccess(response: AuthResponse) {
+      // Persist refresh token and user; keep access token in store
+      localStorage.setItem('refresh_token', response.refresh_token);
+      localStorage.setItem('auth_user', JSON.stringify(response.user));
+      sessionStorage.setItem('access_token', response.access_token);
+      patchState(store, { user: response.user, accessToken: response.access_token, isAuthenticated: true, loading: false, error: null });
+      // Navigate based on user type after successful login
+      console.log('Login successful, navigating based on user type...');
+      navigateBasedOnUserType(response.user.userType, router);
+    }
+  })),
   withMethods((store) => {
     const authService = inject(AuthService);
     const router = inject(Router);
@@ -55,17 +68,10 @@ export const AuthStore = signalStore(
     return {
       login(credentials: LoginRequest) {
         patchState(store, { loading: true, error: null });
-        
+
         authService.login(credentials).subscribe({
           next: (response) => {
-            // Persist refresh token and user; keep access token in store
-            localStorage.setItem('refresh_token', response.refresh_token);
-            localStorage.setItem('auth_user', JSON.stringify(response.user));
-            sessionStorage.setItem('access_token', response.access_token);
-            patchState(store, { user: response.user, accessToken: response.access_token, isAuthenticated: true, loading: false, error: null });
-            // Navigate based on user type after successful login
-            console.log('Login successful, navigating based on user type...');
-            navigateBasedOnUserType(response.user.userType, router);
+            store._loginSuccess(response);
           },
           error: (error) => {
             patchState(store, {
@@ -78,16 +84,10 @@ export const AuthStore = signalStore(
 
       register(userData: RegisterRequest) {
         patchState(store, { loading: true, error: null });
-        
+
         authService.register(userData).subscribe({
           next: (response) => {
-            localStorage.setItem('refresh_token', response.refresh_token);
-            localStorage.setItem('auth_user', JSON.stringify(response.user));
-            sessionStorage.setItem('access_token', response.access_token);
-            patchState(store, { user: response.user, accessToken: response.access_token, isAuthenticated: true, loading: false, error: null });
-            // Navigate based on user type after successful registration
-            console.log('Registration successful, navigating based on user type...');
-            navigateBasedOnUserType(response.user.userType, router);
+            store._loginSuccess(response);
           },
           error: (error) => {
             patchState(store, {
@@ -109,6 +109,7 @@ export const AuthStore = signalStore(
           loading: false,
           error: null,
         });
+        router.navigate(['/login']);
       },
 
       clearError() {
@@ -123,7 +124,7 @@ export const AuthStore = signalStore(
         const token = sessionStorage.getItem('access_token');
         if (token) sessionStorage.setItem('access_token', token);
         patchState(store, { user: existingUser, isAuthenticated: !!token, loading: false });
-        
+
         // Navigate based on user type if authenticated
         if (existingUser && token) {
           const currentPath = router.url;
@@ -135,26 +136,28 @@ export const AuthStore = signalStore(
         return store.accessToken();
       },
 
-      async refreshUsingStoredToken(): Promise<string | null> {
+      refreshUsingStoredToken(): Observable<string> {
         const refreshToken = localStorage.getItem('refresh_token');
-        if (!refreshToken) return null;
-        try {
-          const response = await authService.refresh(refreshToken).toPromise();
-          if (!response) return null;
-          localStorage.setItem('refresh_token', response.refresh_token);
-          localStorage.setItem('auth_user', JSON.stringify(response.user));
-          sessionStorage.setItem('access_token', response.access_token);
-          patchState(store, { user: response.user, accessToken: response.access_token, isAuthenticated: true });
-          return response.access_token;
-        } catch {
-          localStorage.removeItem('refresh_token');
-          localStorage.removeItem('auth_user');
-          sessionStorage.removeItem('access_token');
-          patchState(store, { user: null, accessToken: null, isAuthenticated: false });
-          return null;
+        if (!refreshToken) {
+          return throwError(() => new Error('No refresh token available'));
         }
-      },
 
+        return authService.refresh(refreshToken).pipe(
+          switchMap((newToken) => {
+            if (!newToken?.access_token || !newToken?.refresh_token) {
+              this.logout();
+              return throwError(() => new Error('Invalid refresh token response'));
+            }
+
+            store._loginSuccess(newToken);
+            return of(newToken.access_token);
+          }),
+          catchError((err) => {
+            this.logout();
+            return throwError(() => err);
+          })
+        )
+      },
     };
   }),
   withHooks({

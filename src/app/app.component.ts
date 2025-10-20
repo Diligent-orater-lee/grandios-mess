@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -13,7 +12,6 @@ import { UserType } from './store/models';
   selector: 'app-root',
   imports: [
     RouterOutlet,
-    CommonModule,
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
@@ -25,10 +23,12 @@ import { UserType } from './store/models';
 })
 export class AppComponent {
   private readonly router = inject(Router);
-  public readonly authStore = inject(AuthStore);
+  private readonly authStore = inject(AuthStore);
 
   // Expose UserType enum to template
   protected readonly UserType = UserType;
+  protected readonly isAuthenticated = this.authStore.isAuthenticated;
+  protected readonly user = this.authStore.user;
 
   logout() {
     this.authStore.logout();
