@@ -51,6 +51,10 @@ export class CalendarPageComponent {
   protected readonly calendarGridRef = viewChild<ElementRef<HTMLElement>>('calendarGrid');
 
   protected readonly todayISO = signal(new Date().toString().slice(0, 10));
+  protected readonly isDeliveryGuy = computed(() => {
+    const user = this.authStore.user();
+    return user?.userType === UserType.DELIVERY;
+  });
 
   constructor() {
     this.store.setSelectedUserId(
